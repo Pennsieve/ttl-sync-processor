@@ -1,7 +1,7 @@
 package models
 
 type Contributor struct {
-	Affiliation            *Affiliation `json:"affiliation,omitempty""`
+	Affiliation            *Affiliation `json:"affiliation,omitempty"`
 	ContributorAffiliation string       `json:"contributor_affiliation"`
 	ContributorName        string       `json:"contributor_name"`
 	ContributorORCID       *ORCID       `json:"contributor_orcid,omitempty"`
@@ -38,24 +38,16 @@ func (c *Contributor) WithORCID(id string, label string) *Contributor {
 	return c
 }
 
-type Affiliation struct {
-	Id     string `json:"id"`
-	Label  string `json:"label"`
-	System string `json:"system"`
-	Type   string `json:"type"`
-}
+type Affiliation commonLabel
 
 func NewAffiliation(id string, label string, system string) *Affiliation {
-	return &Affiliation{Id: id, Label: label, System: system, Type: "identifier"}
+	affIdentifier := newCommonLabel(id, label, system, "identifier")
+	return (*Affiliation)(&affIdentifier)
 }
 
-type ORCID struct {
-	Id     string `json:"id"`
-	Label  string `json:"label"`
-	System string `json:"system"`
-	Type   string `json:"type"`
-}
+type ORCID commonLabel
 
 func NewORCID(id string, label string) *ORCID {
-	return &ORCID{Id: id, Label: label, System: "Orcid", Type: "identifier"}
+	orcidIdentifier := newCommonLabel(id, label, "Orcid", "identifier")
+	return (*ORCID)(&orcidIdentifier)
 }
