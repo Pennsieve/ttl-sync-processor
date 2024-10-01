@@ -1,0 +1,46 @@
+{
+  "contributors": [
+    {
+      "affiliation": {
+        "id": "https://ror.org/00xxyyyzzzz",
+        "label": "Charlton Best University",
+        "system": "Ror",
+        "type": "identifier"
+      },
+      "contributor_affiliation": "Charlton Best University",
+      "contributor_name": "Lauridsen, Elara",
+      "contributor_role": [
+        "DataCollector",
+        "DataCurator"
+      ],
+      "first_name": "Elara",
+      "id": "https://api.pennsieve.io/datasets/N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70/contributors/Elara-Lauridsen",
+      "last_name": "Lauridsen"
+    },
+    {
+      "affiliation": {
+        "id": "https://ror.org/00xxyyyzzzz",
+        "label": "Charlton Best University",
+        "system": "Ror",
+        "type": "identifier"
+      },
+      "contributor_affiliation": "Charlton Best University",
+      "contributor_name": "Carstensen, Ajay",
+      "contributor_orcid": {
+        "id": "https://orcid.org/a1482559-3881-4466-b98f-d4240d9d467d",
+        "label": "Ajay Carstensen",
+        "system": "Orcid",
+        "type": "identifier"
+      },
+      "contributor_role": [
+        "DataCollector",
+        "DataCurator"
+      ],
+      "data_remote_user_id": "user:3478dd52-e229-4e95-ab23-c6bd1e3d4d25",
+      "first_name": "Ajay",
+      "id": "https://orcid.org/a1482559-3881-4466-b98f-d4240d9d467d",
+      "last_name": "Carstensen"
+    }
+  ],
+  "id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70"
+}

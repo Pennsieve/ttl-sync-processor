@@ -1,4 +1,4 @@
-package models
+package curation
 
 type SpecimenDirs struct {
 	Records []Record `json:"records,omitempty"`

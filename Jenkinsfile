@@ -11,11 +11,11 @@ ansiColor('xterm') {
   try {
 
     stage("Run Client Tests") {
-          sh "cd ./client && go test -v ./..."
+          sh "go test -C client -v ./..."
     }
 
     stage("Run Service Tests") {
-          sh "cd ./service && go test -v ./..."
+          sh "go test -C service -v ./..."
     }
 
     stage("Build Container") {

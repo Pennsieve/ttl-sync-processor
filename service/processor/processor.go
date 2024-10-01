@@ -1,18 +1,17 @@
 package processor
 
 import (
-	"encoding/json"
-	"fmt"
-	"github.com/pennsieve/ttl-sync-processor/client/models"
+	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 	"log/slog"
-	"os"
 	"path/filepath"
 )
 
 var logger = logging.PackageLogger("processor")
 
 const CurationExportFilename = "curation-export.json"
+
+const ContributorModelName = "contributor"
 
 type CurationExportSyncProcessor struct {
 	IntegrationID   string
@@ -30,10 +29,26 @@ func NewCurationExportSyncProcessor(integrationID string, inputDirectory string,
 
 func (p *CurationExportSyncProcessor) Run() error {
 	logger.Info("starting sync processing")
-	curationExportPath := p.curationExportPath()
-	curationExport, err := p.readCurationExport()
+	logger.Info("Reading metadata from curation download")
+	_, err := p.FromCuration()
 	if err != nil {
 		return err
+	}
+	logger.Info("Reading existing metadata from Pennsieve download")
+	_, err = p.ReadExistingPennsieveMetadata()
+	if err != nil {
+		return err
+	}
+
+	logger.Info("finished sync processing")
+	return nil
+}
+
+func (p *CurationExportSyncProcessor) FromCuration() (*metadata.Sync, error) {
+	curationExportPath := p.curationExportPath()
+	curationExport, err := p.ReadCurationExport()
+	if err != nil {
+		return nil, err
 	}
 	logger.Info("read curation export file",
 		slog.String("path", curationExportPath),
@@ -42,21 +57,7 @@ func (p *CurationExportSyncProcessor) Run() error {
 	logger.Debug("curation export file contents",
 		slog.Any("curation-export", curationExport),
 	)
-	logger.Info("finished sync processing")
-	return nil
-}
-
-func (p *CurationExportSyncProcessor) readCurationExport() (*models.DatasetCurationExport, error) {
-	curationExportPath := p.curationExportPath()
-	curationExportFile, err := os.Open(curationExportPath)
-	if err != nil {
-		return nil, fmt.Errorf("error opening curation export file %s: %w", curationExportPath, err)
-	}
-	var curationExport models.DatasetCurationExport
-	if err := json.NewDecoder(curationExportFile).Decode(&curationExport); err != nil {
-		return nil, fmt.Errorf("error decoding curation export file %s: %w", curationExportPath, err)
-	}
-	return &curationExport, nil
+	return p.ConvertCurationExport(curationExport)
 }
 
 func (p *CurationExportSyncProcessor) curationExportPath() string {

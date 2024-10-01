@@ -1,10 +1,10 @@
-package modelstest
+package curationtest
 
-import "github.com/pennsieve/ttl-sync-processor/client/models"
+import "github.com/pennsieve/ttl-sync-processor/client/models/curation"
 import "github.com/google/uuid"
 
 type ContributorBuilder struct {
-	contributor *models.Contributor
+	contributor *curation.Contributor
 }
 
 func NewContributorBuilder() *ContributorBuilder {
@@ -13,7 +13,12 @@ func NewContributorBuilder() *ContributorBuilder {
 	firstName := uuid.NewString()
 	id := uuid.NewString()
 	lastName := uuid.NewString()
-	return &ContributorBuilder{contributor: models.NewContributor(affiliation, name, firstName, id, lastName)}
+	return &ContributorBuilder{contributor: curation.NewContributor(id, firstName, lastName, name, affiliation)}
+}
+
+func (b *ContributorBuilder) WithMiddleName() *ContributorBuilder {
+	b.contributor = b.contributor.WithMiddleName(uuid.NewString())
+	return b
 }
 
 func (b *ContributorBuilder) WithRoles(roleCount int) *ContributorBuilder {
@@ -37,6 +42,6 @@ func (b *ContributorBuilder) WithORCID() *ContributorBuilder {
 	return b
 }
 
-func (b *ContributorBuilder) Build() models.Contributor {
+func (b *ContributorBuilder) Build() curation.Contributor {
 	return *b.contributor
 }

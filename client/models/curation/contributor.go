@@ -1,4 +1,4 @@
-package models
+package curation
 
 type Contributor struct {
 	Affiliation            *Affiliation `json:"affiliation,omitempty"`
@@ -7,18 +7,24 @@ type Contributor struct {
 	ContributorORCID       *ORCID       `json:"contributor_orcid,omitempty"`
 	ContributorRole        []string     `json:"contributor_role,omitempty"`
 	FirstName              string       `json:"first_name"`
-	Id                     string       `json:"id"`
+	ID                     string       `json:"id"`
 	LastName               string       `json:"last_name"`
+	MiddleName             string       `json:"middle_name,omitempty"`
 }
 
-func NewContributor(contributorAffiliation string, contributorName string, firstName string, id string, lastName string) *Contributor {
+func NewContributor(id string, firstName string, lastName string, contributorName string, contributorAffiliation string) *Contributor {
 	return &Contributor{
 		ContributorAffiliation: contributorAffiliation,
 		ContributorName:        contributorName,
 		FirstName:              firstName,
-		Id:                     id,
+		ID:                     id,
 		LastName:               lastName,
 	}
+}
+
+func (c *Contributor) WithMiddleName(middleName string) *Contributor {
+	c.MiddleName = middleName
+	return c
 }
 
 func (c *Contributor) WithRoles(contributorRoles ...string) *Contributor {
@@ -38,16 +44,16 @@ func (c *Contributor) WithORCID(id string, label string) *Contributor {
 	return c
 }
 
-type Affiliation commonLabel
+type Affiliation embeddedIdentifier
 
 func NewAffiliation(id string, label string, system string) *Affiliation {
-	affIdentifier := newCommonLabel(id, label, system, "identifier")
+	affIdentifier := newDescriptionlessIdentifier(id, label, system)
 	return (*Affiliation)(&affIdentifier)
 }
 
-type ORCID commonLabel
+type ORCID embeddedIdentifier
 
 func NewORCID(id string, label string) *ORCID {
-	orcidIdentifier := newCommonLabel(id, label, "Orcid", "identifier")
+	orcidIdentifier := newDescriptionlessIdentifier(id, label, "Orcid")
 	return (*ORCID)(&orcidIdentifier)
 }

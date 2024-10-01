@@ -1,14 +1,11 @@
 package processor
 
 import (
-	"encoding/json"
 	"github.com/google/uuid"
-	"github.com/pennsieve/ttl-sync-processor/client/models"
-	"github.com/pennsieve/ttl-sync-processor/client/modelstest"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"log/slog"
-	"os"
 	"testing"
 )
 
@@ -19,37 +16,73 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 		logging.Level.Set(currentLogLevel)
 	})
 	integrationID := uuid.NewString()
-	inputDirectory := t.TempDir()
+	inputDirectory := "testdata/input"
 	outputDirectory := t.TempDir()
-
-	datasetID := uuid.NewString()
 
 	processor := NewCurationExportSyncProcessor(integrationID, inputDirectory, outputDirectory)
 
-	// Setup Input directory with pre-requisites
-	// curation-export file
-	subjectDirPath := uuid.NewString()
-	sampleDirPath1 := uuid.NewString()
-	sampleDirPath2 := uuid.NewString()
-	curationExport := models.NewDatasetCurationExport(datasetID).
-		WithContributors(
-			modelstest.NewContributorBuilder().Build(),
-			modelstest.NewContributorBuilder().WithRoles(2).WithAffiliation().Build(),
-			modelstest.NewContributorBuilder().WithRoles(1).WithORCID().Build(),
-		).
-		WithDirStructureEntries(
-			models.NewDirStructureEntry(subjectDirPath, uuid.NewString()),
-			models.NewDirStructureEntry(sampleDirPath1, uuid.NewString()),
-			models.NewDirStructureEntry(sampleDirPath2, uuid.NewString()),
-		).
-		WithSpecimenDirs(*models.NewSpecimenDirs().
-			WithRecord(uuid.NewString(), models.SubjectRecordType, subjectDirPath).
-			WithRecord(uuid.NewString(), models.SampleRecordType, sampleDirPath1, sampleDirPath2),
-		)
-
-	curationExportFile, err := os.Create(processor.curationExportPath())
-	require.NoError(t, err)
-	require.NoError(t, json.NewEncoder(curationExportFile).Encode(curationExport))
-
 	require.NoError(t, processor.Run())
+}
+
+func TestCurationExportSyncProcessor_ReadExistingPennsieveMetadata(t *testing.T) {
+	integrationID := uuid.NewString()
+	inputDirectory := "testdata/input"
+	outputDirectory := t.TempDir()
+
+	processor := NewCurationExportSyncProcessor(integrationID, inputDirectory, outputDirectory)
+	existingMetadata, err := processor.ReadExistingPennsieveMetadata()
+	require.NoError(t, err)
+	assert.NotNil(t, existingMetadata)
+	assert.Len(t, existingMetadata.Contributors, 5)
+
+	contrib1 := existingMetadata.Contributors[0]
+	assert.Equal(t, "Elara", contrib1.FirstName)
+	assert.Equal(t, "Lauridsen", contrib1.LastName)
+	assert.Empty(t, contrib1.Degree)
+	assert.Empty(t, contrib1.NodeID)
+	assert.Empty(t, contrib1.MiddleInitial)
+	assert.Empty(t, contrib1.ORCID)
+
+	contrib2 := existingMetadata.Contributors[1]
+	assert.Equal(t, "Yordanka", contrib2.FirstName)
+	assert.Equal(t, "Vukoja", contrib2.LastName)
+	assert.Equal(t, "PHD", contrib2.Degree)
+	assert.Empty(t, contrib2.NodeID)
+	assert.Equal(t, "T", contrib2.MiddleInitial)
+	assert.Empty(t, contrib2.ORCID)
+
+	contrib5 := existingMetadata.Contributors[4]
+	assert.Equal(t, "Ajay", contrib5.FirstName)
+	assert.Equal(t, "Carstensen", contrib5.LastName)
+	assert.Empty(t, contrib5.Degree)
+	assert.Equal(t, "N:user:3478dd52-e229-4e95-ab23-c6bd1e3d4d25", contrib5.NodeID)
+	assert.Empty(t, contrib5.MiddleInitial)
+	assert.Equal(t, "a1482559-3881-4466-b98f-d4240d9d467d", contrib5.ORCID)
+}
+
+func TestCurationExportSyncProcessor_ReadCurationExport(t *testing.T) {
+	integrationID := uuid.NewString()
+	inputDirectory := "testdata/input"
+	outputDirectory := t.TempDir()
+
+	processor := NewCurationExportSyncProcessor(integrationID, inputDirectory, outputDirectory)
+	export, err := processor.ReadCurationExport()
+	require.NoError(t, err)
+	assert.NotNil(t, export)
+	assert.Len(t, export.Contributors, 2)
+}
+
+func TestCurationExportSyncProcessor_ConvertCurationExport(t *testing.T) {
+	integrationID := uuid.NewString()
+	inputDirectory := "testdata/input"
+	outputDirectory := t.TempDir()
+
+	processor := NewCurationExportSyncProcessor(integrationID, inputDirectory, outputDirectory)
+	export, err := processor.ReadCurationExport()
+	require.NoError(t, err)
+
+	exported, err := processor.ConvertCurationExport(export)
+	require.NoError(t, err)
+	assert.NotNil(t, exported)
+	assert.Len(t, exported.Contributors, 2)
 }
