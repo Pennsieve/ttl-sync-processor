@@ -15,7 +15,3 @@ func TestNewIdentifier_NoSynonyms(t *testing.T) {
 	assert.NotContains(t, string(bytes), "synonyms")
 	assert.NotContains(t, string(bytes), "description")
 }
-
-func TestTest(t *testing.T) {
-	assert.Fail(t, "testing")
-}
