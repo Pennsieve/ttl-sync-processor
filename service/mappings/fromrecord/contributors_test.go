@@ -2,7 +2,6 @@ package fromrecord
 
 import (
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
-	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -14,11 +13,8 @@ func TestToContributor(t *testing.T) {
 	reader, err := metadataclient.NewReader(inputDirectory)
 	require.NoError(t, err)
 
-	schemaData := SchemaData{}
-	existingMetadata, err := ToDatasetMetadata(reader, schemaData)
+	existingMetadata, err := ToDatasetMetadata(reader)
 	require.NoError(t, err)
-	assert.Contains(t, schemaData, metadata.ContributorModelName)
-	assert.Equal(t, "d77470bb-f39d-49ee-aa17-783e128cdfa0", schemaData[metadata.ContributorModelName])
 	assert.NotNil(t, existingMetadata)
 	assert.Len(t, existingMetadata.Contributors, 5)
 

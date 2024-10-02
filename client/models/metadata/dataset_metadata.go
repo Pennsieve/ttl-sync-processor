@@ -11,13 +11,28 @@ type DatasetMetadata struct {
 	Contributors []Contributor
 }
 
-func hashField(field any, fieldName string) (string, error) {
-	bytes, err := json.Marshal(field)
+func computeHash(value any) (string, error) {
+	bytes, err := json.Marshal(value)
 	if err != nil {
-		return "", fmt.Errorf("error marshalling %s: %w", fieldName, err)
+		return "", err
 	}
 	hashBytes := md5.Sum(bytes)
 	return hex.EncodeToString(hashBytes[:]), nil
+}
+func ComputeHash(value any) (string, error) {
+	hash, err := computeHash(value)
+	if err != nil {
+		return "", fmt.Errorf("error marshalling value for hashing: %w", err)
+	}
+	return hash, nil
+}
+
+func hashField(field any, fieldName string) (string, error) {
+	hash, err := computeHash(field)
+	if err != nil {
+		return "", fmt.Errorf("error marshalling %s: %w", fieldName, err)
+	}
+	return hash, nil
 }
 
 func (s DatasetMetadata) ContributorsHash() (string, error) {

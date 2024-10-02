@@ -6,7 +6,7 @@ replace github.com/pennsieve/ttl-sync-processor/client => ./../client
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/pennsieve/processor-pre-metadata/client v0.0.0-20241001183223-1154641c72c7
+	github.com/pennsieve/processor-pre-metadata/client v0.0.0-20241002182959-9c48f1e93d79
 	github.com/pennsieve/ttl-sync-processor/client v0.0.0
 	github.com/stretchr/testify v1.9.0
 )

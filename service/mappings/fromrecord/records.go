@@ -3,13 +3,12 @@ package fromrecord
 import (
 	"fmt"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"log/slog"
 )
 
-func ToDatasetMetadata(reader *metadataclient.Reader, schemaData SchemaData) (*metadata.DatasetMetadata, error) {
-	contributors, err := MapRecords(reader, schemaData, metadata.ContributorModelName, ToContributor)
+func ToDatasetMetadata(reader *metadataclient.Reader) (*metadata.DatasetMetadata, error) {
+	contributors, err := MapRecords(reader, metadata.ContributorModelName, ToContributor)
 	if err != nil {
 		return nil, err
 	}
@@ -19,14 +18,12 @@ func ToDatasetMetadata(reader *metadataclient.Reader, schemaData SchemaData) (*m
 	return existing, nil
 }
 
-func MapRecords[T any](reader *metadataclient.Reader, schemaData SchemaData, modelName string, mapping Mapping[T]) ([]T, error) {
+func MapRecords[T any](reader *metadataclient.Reader, modelName string, mapping Mapping[T]) ([]T, error) {
 	model, modelExists := reader.ModelNamesToSchemaElements[modelName]
 	if !modelExists {
-		schemaData[modelName] = &changesetmodels.ModelCreate{Name: modelName}
 		logger.Warn("model does not exist", slog.String("modelName", modelName))
 		return []T{}, nil
 	}
-	schemaData[modelName] = model.ID
 	logger.Info("reading existing records", slog.String("modelName", modelName),
 		slog.String("modelID", model.ID))
 	records, err := reader.GetRecordsForModel(modelName)

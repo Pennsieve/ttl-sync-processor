@@ -7,7 +7,6 @@ import (
 	"github.com/pennsieve/ttl-sync-processor/client/changeset"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
-	"github.com/pennsieve/ttl-sync-processor/service/mappings/fromrecord"
 	"github.com/pennsieve/ttl-sync-processor/service/sync"
 	"log/slog"
 	"os"
@@ -46,13 +45,12 @@ func (p *CurationExportSyncProcessor) Run() error {
 		return err
 	}
 	logger.Info("Reading existing metadata from Pennsieve download")
-	schemaData := fromrecord.SchemaData{}
-	oldMetadata, err := p.ExistingPennsieveMetadata(schemaData)
+	oldMetadata, err := p.ExistingPennsieveMetadata()
 	if err != nil {
 		return err
 	}
 	logger.Info("Computing required changes")
-	changes, err := sync.ComputeChangeset(schemaData, oldMetadata, newMetadata)
+	changes, err := sync.ComputeChangeset(p.MetadataReader.ModelNamesToSchemaElements, oldMetadata, newMetadata)
 	if err != nil {
 		return err
 	}

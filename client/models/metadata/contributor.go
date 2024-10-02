@@ -1,6 +1,7 @@
 package metadata
 
 const ContributorModelName = "contributor"
+const ContributorDisplayName = "Contributor"
 
 // Keys should correspond to json struct tags
 
