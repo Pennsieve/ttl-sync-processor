@@ -21,6 +21,11 @@ func (b *ContributorBuilder) WithMiddleName() *ContributorBuilder {
 	return b
 }
 
+func (b *ContributorBuilder) WithDataRemoteUserID() *ContributorBuilder {
+	b.contributor = b.contributor.WithDataRemoteUserID(uuid.NewString())
+	return b
+}
+
 func (b *ContributorBuilder) WithRoles(roleCount int) *ContributorBuilder {
 	if roleCount > 0 {
 		roles := make([]string, roleCount)

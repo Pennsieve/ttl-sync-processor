@@ -6,6 +6,7 @@ type Contributor struct {
 	ContributorName        string       `json:"contributor_name"`
 	ContributorORCID       *ORCID       `json:"contributor_orcid,omitempty"`
 	ContributorRole        []string     `json:"contributor_role,omitempty"`
+	DataRemoteUserID       string       `json:"data_remote_user_id,omitempty"`
 	FirstName              string       `json:"first_name"`
 	ID                     string       `json:"id"`
 	LastName               string       `json:"last_name"`
@@ -24,6 +25,11 @@ func NewContributor(id string, firstName string, lastName string, contributorNam
 
 func (c *Contributor) WithMiddleName(middleName string) *Contributor {
 	c.MiddleName = middleName
+	return c
+}
+
+func (c *Contributor) WithDataRemoteUserID(dataRemoteUserID string) *Contributor {
+	c.DataRemoteUserID = dataRemoteUserID
 	return c
 }
 

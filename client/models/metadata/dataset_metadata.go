@@ -7,7 +7,7 @@ import (
 	"fmt"
 )
 
-type Sync struct {
+type DatasetMetadata struct {
 	Contributors []Contributor
 }
 
@@ -20,6 +20,6 @@ func hashField(field any, fieldName string) (string, error) {
 	return hex.EncodeToString(hashBytes[:]), nil
 }
 
-func (s Sync) ContributorsHash() (string, error) {
+func (s DatasetMetadata) ContributorsHash() (string, error) {
 	return hashField(s.Contributors, "contributors")
 }

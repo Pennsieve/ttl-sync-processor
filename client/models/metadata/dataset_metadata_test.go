@@ -41,9 +41,9 @@ func TestSync_ContributorsHash(t *testing.T) {
 		"proper subset": {[]Contributor{contrib3, contrib2}, []Contributor{contrib3, contrib2, contrib1}, false},
 	} {
 		t.Run(scenario, func(t *testing.T) {
-			hash1, err := Sync{Contributors: params.contribs1}.ContributorsHash()
+			hash1, err := DatasetMetadata{Contributors: params.contribs1}.ContributorsHash()
 			require.NoError(t, err)
-			hash2, err := Sync{Contributors: params.contribs2}.ContributorsHash()
+			hash2, err := DatasetMetadata{Contributors: params.contribs2}.ContributorsHash()
 			require.NoError(t, err)
 			if params.expectEqual {
 				assert.Equal(t, hash1, hash2)

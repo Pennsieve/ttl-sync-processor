@@ -25,7 +25,7 @@ func FromEnv() (*CurationExportSyncProcessor, error) {
 	return NewCurationExportSyncProcessor(integrationID,
 		inputDirectory,
 		outputDirectory,
-	), nil
+	)
 }
 
 func LookupRequiredEnvVar(key string) (string, error) {
