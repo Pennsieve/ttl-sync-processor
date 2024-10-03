@@ -12,5 +12,9 @@ func ToDatasetMetadata(export *curation.DatasetExport) (*metadata.DatasetMetadat
 	if err != nil {
 		return nil, err
 	}
+	exported.Subjects, err = MapSlice(export.Subjects, ToSubject)
+	if err != nil {
+		return nil, err
+	}
 	return exported, nil
 }

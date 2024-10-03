@@ -6,7 +6,7 @@ import (
 	"fmt"
 )
 
-type SpeciesIdentifier embeddedIdentifier
+type SpeciesIdentifier EmbeddedIdentifier
 
 type Subject struct {
 	ID string `json:"subject_id"`

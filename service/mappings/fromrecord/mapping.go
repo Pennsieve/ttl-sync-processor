@@ -1,6 +1,7 @@
 package fromrecord
 
 import (
+	"fmt"
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 )
@@ -26,4 +27,18 @@ func safeString(value any) string {
 		return ""
 	}
 	return value.(string)
+}
+
+func safeStringSlice(value any) []string {
+	if value == nil {
+		return []string{}
+	}
+	return value.([]string)
+}
+
+func checkRecordType(record instance.Record, expectedModelName string) error {
+	if record.Type != expectedModelName {
+		return fmt.Errorf("record %s is not a %s instance: %s", record.ID, expectedModelName, record.Type)
+	}
+	return nil
 }

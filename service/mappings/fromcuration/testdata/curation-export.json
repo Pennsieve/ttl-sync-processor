@@ -55,5 +55,129 @@
       "middle_name": "Ó Braonáin"
     }
   ],
-  "id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70"
+  "id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+  "subjects": [
+    {
+      "age": {
+        "magnitude": 10,
+        "type": "quantity",
+        "units": "week"
+      },
+      "age_category": "Young adult",
+      "phenotype": "Wild-type",
+      "rrid_for_strain": {
+        "id": "RRID:RGD_737903",
+        "label": "Hsd:SD",
+        "synonyms": [
+          "Hsd:SD"
+        ],
+        "system": "Rrid",
+        "type": "identifier"
+      },
+      "sex": {
+        "id": "http://purl.obolibrary.org/obo/PATO_0000383",
+        "label": "female",
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "species": {
+        "id": "http://purl.obolibrary.org/obo/NCBITaxon_10116",
+        "label": "Rattus norvegicus",
+        "synonyms": [
+          "brown rat",
+          "Norway rat",
+          "rat",
+          "Mus norvegicus",
+          "rats"
+        ],
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "strain": "Sprague Dawley",
+      "subject_id": "f1027e6e-17cf-45d7-8b57-4c91bfd93fce"
+    },
+    {
+      "age": {
+        "magnitude": 9,
+        "type": "quantity",
+        "units": "month"
+      },
+      "age_category": "juvenile",
+      "laboratory_internal_id": 9999,
+      "protocol_title": "Title of This Protocol",
+      "protocol_url_or_doi": "https://doi.org/c6f46c47-9fcd-4f15-a185-97cdd66f7def",
+      "sex": "male",
+      "species": "canis lupus familiaris",
+      "strain": "Mongrel",
+      "subject_experimental_group": "Something, chronic",
+      "subject_id": "a9ea0803-651b-4f0e-bda5-e2430e235e94"
+    },
+    {
+      "age": {
+        "magnitude": 9,
+        "type": "quantity",
+        "units": "month"
+      },
+      "age_category": "juvenile",
+      "laboratory_internal_id": "888888",
+      "protocol_title": "Title of this Protocol",
+      "protocol_url_or_doi": [
+        {
+          "id": "https://doi.org/c6f46c47-9fcd-4f15-a185-97cdd66f7def",
+          "label": "Title of this Protocol v1",
+          "system": "Doi",
+          "type": "identifier"
+        }
+      ],
+      "sex": {
+        "id": "http://purl.obolibrary.org/obo/PATO_0000384",
+        "label": "male",
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "species": {
+        "id": "http://purl.obolibrary.org/obo/NCBITaxon_9615",
+        "label": "Canis familiaris",
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "strain": "Mongrel",
+      "subject_experimental_group": "Something, chronic",
+      "subject_id": "9b942959-2ebb-4680-b3f7-6d1cdbbe706d"
+    },
+    {
+      "age": {
+        "magnitude": 1,
+        "type": "quantity",
+        "units": "year"
+      },
+      "age_category": "juvenile",
+      "laboratory_internal_id": "878787878787",
+      "protocol_title": "Title of this Protocol",
+      "protocol_url_or_doi": [
+        {
+          "id": "https://doi.org/c6f46c47-9fcd-4f15-a185-97cdd66f7def",
+          "label": "Title of this Protocol v1",
+          "system": "Doi",
+          "type": "identifier"
+        }
+      ],
+      "sex": {
+        "id": "http://purl.obolibrary.org/obo/PATO_0000384",
+        "label": "male",
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "species": {
+        "id": "http://purl.obolibrary.org/obo/NCBITaxon_9615",
+        "label": "Canis familiaris",
+        "synonyms": [],
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "strain": "Mongrel",
+      "subject_experimental_group": "Something, chronic",
+      "subject_id": "5061b8e3-086b-4e87-b2f0-08f1a5b96679"
+    }
+  ]
 }

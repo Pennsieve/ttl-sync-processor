@@ -9,6 +9,7 @@ import (
 
 type DatasetMetadata struct {
 	Contributors []Contributor
+	Subjects     []Subject
 }
 
 func computeHash(value any) (string, error) {

@@ -1,15 +1,14 @@
 package fromrecord
 
 import (
-	"fmt"
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
 func ToContributor(record instance.Record) (metadata.Contributor, error) {
 	contributor := metadata.Contributor{}
-	if record.Type != metadata.ContributorModelName {
-		return contributor, fmt.Errorf("record %s is not a %s instance: %s", record.ID, metadata.ContributorModelName, record.Type)
+	if err := checkRecordType(record, metadata.ContributorModelName); err != nil {
+		return contributor, err
 	}
 	for _, v := range record.Values {
 		switch v.Name {

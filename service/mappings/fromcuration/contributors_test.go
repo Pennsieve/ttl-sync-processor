@@ -7,9 +7,9 @@ import (
 )
 
 func TestToContributor(t *testing.T) {
-	inputDirectory := "testdata/curation-export.json"
+	curationExportPath := "testdata/curation-export.json"
 
-	datasetExport, err := UnmarshalDatasetExport(inputDirectory)
+	datasetExport, err := UnmarshalDatasetExport(curationExportPath)
 	require.NoError(t, err)
 
 	exported, err := MapSlice(datasetExport.Contributors, ToContributor)

@@ -50,14 +50,14 @@ func (c *Contributor) WithORCID(id string, label string) *Contributor {
 	return c
 }
 
-type Affiliation embeddedIdentifier
+type Affiliation EmbeddedIdentifier
 
 func NewAffiliation(id string, label string, system string) *Affiliation {
 	affIdentifier := newDescriptionlessIdentifier(id, label, system)
 	return (*Affiliation)(&affIdentifier)
 }
 
-type ORCID embeddedIdentifier
+type ORCID EmbeddedIdentifier
 
 func NewORCID(id string, label string) *ORCID {
 	orcidIdentifier := newDescriptionlessIdentifier(id, label, "Orcid")

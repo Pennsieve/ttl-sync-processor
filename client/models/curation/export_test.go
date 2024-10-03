@@ -14,6 +14,13 @@ import (
 
 func TestRoundTrip(t *testing.T) {
 	datasetID := uuid.NewString()
+	simpleSubject, err := curationtest.NewSubjectBuilder().WithSimpleSpecies().Build()
+	require.NoError(t, err)
+	complexSubject, err := curationtest.NewSubjectBuilder().WithSubjectIdentifier(0).Build()
+	require.NoError(t, err)
+	complexSubjectWithSynonyms, err := curationtest.NewSubjectBuilder().WithSubjectIdentifier(3).Build()
+	require.NoError(t, err)
+
 	curationExport := curation.NewDatasetExport(datasetID).
 		WithContributors(
 			curationtest.NewContributorBuilder().Build(),
@@ -30,6 +37,11 @@ func TestRoundTrip(t *testing.T) {
 			*curation.NewSpecimenDirs().
 				WithRecord(uuid.NewString(), curation.SampleRecordType, uuid.NewString()).
 				WithRecord(uuid.NewString(), curation.SubjectRecordType, uuid.NewString()),
+		).
+		WithSubjects(
+			simpleSubject,
+			complexSubject,
+			complexSubjectWithSynonyms,
 		)
 
 	directory := t.TempDir()

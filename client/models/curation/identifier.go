@@ -1,6 +1,6 @@
 package curation
 
-type embeddedIdentifier struct {
+type EmbeddedIdentifier struct {
 	ID          string   `json:"id"`
 	Label       string   `json:"label"`
 	Type        string   `json:"type"`
@@ -9,10 +9,10 @@ type embeddedIdentifier struct {
 	Description string   `json:"description,omitempty"`
 }
 
-func newEmbeddedIdentifier(id, label, system, description string, synonym ...string) embeddedIdentifier {
-	return embeddedIdentifier{ID: id, Label: label, Synonyms: synonym, System: system, Type: "identifier", Description: description}
+func newEmbeddedIdentifier(id, label, system, description string, synonym ...string) EmbeddedIdentifier {
+	return EmbeddedIdentifier{ID: id, Label: label, Synonyms: synonym, System: system, Type: "identifier", Description: description}
 }
 
-func newDescriptionlessIdentifier(id string, label string, system string, synonym ...string) embeddedIdentifier {
+func newDescriptionlessIdentifier(id string, label string, system string, synonym ...string) EmbeddedIdentifier {
 	return newEmbeddedIdentifier(id, label, system, "", synonym...)
 }
