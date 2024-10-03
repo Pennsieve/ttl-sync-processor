@@ -27,7 +27,7 @@ func TestComputeContributorsChanges(t *testing.T) {
 }
 
 func everythingEmpty(t *testing.T) {
-	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, &metadata.DatasetMetadata{}, &metadata.DatasetMetadata{})
+	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{})
 	require.NoError(t, err)
 	// Nil changes means no updates required.
 	require.Nil(t, changes)
@@ -35,7 +35,7 @@ func everythingEmpty(t *testing.T) {
 
 func modelDoesNotExist(t *testing.T) {
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
-	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, &metadata.DatasetMetadata{}, &metadata.DatasetMetadata{Contributors: []metadata.Contributor{newContrib}})
+	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{Contributors: []metadata.Contributor{newContrib}})
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
@@ -72,7 +72,7 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	newContrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
 
-	changes, err := ComputeContributorsChanges(schemaData, &metadata.DatasetMetadata{}, &metadata.DatasetMetadata{Contributors: []metadata.Contributor{newContrib, newContrib2}})
+	changes, err := ComputeContributorsChanges(schemaData, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{Contributors: []metadata.Contributor{newContrib, newContrib2}})
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
@@ -131,7 +131,7 @@ func noChanges(t *testing.T) {
 
 	changes, err := ComputeContributorsChanges(
 		schemaData,
-		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
+		&metadata.SavedDatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
 		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
 	)
 	require.NoError(t, err)
@@ -146,7 +146,7 @@ func orderChange(t *testing.T) {
 
 	changes, err := ComputeContributorsChanges(
 		schemaData,
-		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib2, contrib}},
+		&metadata.SavedDatasetMetadata{Contributors: []metadata.Contributor{contrib2, contrib}},
 		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
 	)
 	require.NoError(t, err)
@@ -207,7 +207,7 @@ func removeContributor(t *testing.T) {
 
 	changes, err := ComputeContributorsChanges(
 		schemaData,
-		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib3, contrib2, contrib}},
+		&metadata.SavedDatasetMetadata{Contributors: []metadata.Contributor{contrib3, contrib2, contrib}},
 		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
 	)
 	require.NoError(t, err)
@@ -267,7 +267,7 @@ func addContributor(t *testing.T) {
 
 	changes, err := ComputeContributorsChanges(
 		schemaData,
-		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib}},
+		&metadata.SavedDatasetMetadata{Contributors: []metadata.Contributor{contrib}},
 		&metadata.DatasetMetadata{Contributors: []metadata.Contributor{contrib, contrib2}},
 	)
 	require.NoError(t, err)

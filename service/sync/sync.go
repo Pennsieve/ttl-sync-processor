@@ -9,7 +9,7 @@ import (
 
 var logger = logging.PackageLogger("sync")
 
-func ComputeChangeset(schemaData map[string]schema.Element, old, new *metadata.DatasetMetadata) (*changesetmodels.Dataset, error) {
+func ComputeChangeset(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.Dataset, error) {
 	datasetChanges := &changesetmodels.Dataset{}
 	if err := appendModelChanges(datasetChanges, schemaData, old, new, ComputeContributorsChanges); err != nil {
 		return nil, err
@@ -20,9 +20,9 @@ func ComputeChangeset(schemaData map[string]schema.Element, old, new *metadata.D
 	return datasetChanges, nil
 }
 
-type modelChangeComputer func(schemaData map[string]schema.Element, old, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error)
+type modelChangeComputer func(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error)
 
-func appendModelChanges(datasetChanges *changesetmodels.Dataset, schemaData map[string]schema.Element, old, new *metadata.DatasetMetadata, computer modelChangeComputer) error {
+func appendModelChanges(datasetChanges *changesetmodels.Dataset, schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata, computer modelChangeComputer) error {
 	modelChanges, err := computer(schemaData, old, new)
 	if err != nil {
 		return err

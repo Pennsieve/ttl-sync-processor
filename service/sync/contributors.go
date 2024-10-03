@@ -10,7 +10,7 @@ import (
 	"log/slog"
 )
 
-func ComputeContributorsChanges(schemaData map[string]schema.Element, old, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error) {
+func ComputeContributorsChanges(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error) {
 	oldHash, err := metadata.ComputeHash(old.Contributors)
 	if err != nil {
 		return nil, fmt.Errorf("error computing hash of existing contributors metadata: %w", err)

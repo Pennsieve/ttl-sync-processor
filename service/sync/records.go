@@ -18,3 +18,31 @@ func appendNonEmptyRecordValue[T HasLen](values []changesetmodels.RecordValue, n
 	}
 	return values
 }
+
+func stringSliceEqual(old, new []string) bool {
+	if len(old) != len(new) {
+		return false
+	}
+	for i := range old {
+		if old[i] != new[i] {
+			return false
+		}
+	}
+	return true
+}
+
+func appendStringRecordValue(values []changesetmodels.RecordValue, name string, oldValue, newValue string, wasEqual bool) ([]changesetmodels.RecordValue, bool) {
+	stillEqual := wasEqual && oldValue == newValue
+	return append(values, changesetmodels.RecordValue{
+		Value: newValue,
+		Name:  name,
+	}), stillEqual
+}
+
+func appendStringSliceRecordValue(values []changesetmodels.RecordValue, name string, oldValue, newValue []string, wasEqual bool) ([]changesetmodels.RecordValue, bool) {
+	stillEqual := wasEqual && stringSliceEqual(oldValue, newValue)
+	return append(values, changesetmodels.RecordValue{
+		Value: newValue,
+		Name:  name,
+	}), stillEqual
+}

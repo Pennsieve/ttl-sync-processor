@@ -1,5 +1,7 @@
 package metadata
 
+import changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+
 const SubjectModelName = "subject"
 const SubjectDisplayName = "Subject"
 
@@ -13,4 +15,9 @@ type Subject struct {
 	ID              string   `json:"id"`
 	Species         string   `json:"species"`
 	SpeciesSynonyms []string `json:"species_synonyms,omitempty"`
+}
+
+type SavedSubject struct {
+	PennsieveID changesetmodels.PennsieveRecordID `json:"-"`
+	Subject
 }

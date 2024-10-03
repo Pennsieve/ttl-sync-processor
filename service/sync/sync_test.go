@@ -21,9 +21,8 @@ func TestComputeChangeset(t *testing.T) {
 }
 
 func emptyChangesets(t *testing.T) {
-	changes, err := ComputeChangeset(map[string]schema.Element{}, &metadata.DatasetMetadata{}, &metadata.DatasetMetadata{})
+	changes, err := ComputeChangeset(map[string]schema.Element{}, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{})
 	require.NoError(t, err)
-	// Nil changes means no updates required.
 	require.NotNil(t, changes)
 	assert.Empty(t, changes.Models)
 	assert.Empty(t, changes.Relationships)
@@ -37,7 +36,7 @@ func smokeTest(t *testing.T) {
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()
 	subject := metadatatest.NewSubjectBuilder().Build()
 	changes, err := ComputeChangeset(schemaData,
-		&metadata.DatasetMetadata{},
+		&metadata.SavedDatasetMetadata{},
 		&metadata.DatasetMetadata{
 			Contributors: []metadata.Contributor{contributor},
 			Subjects:     []metadata.Subject{subject},

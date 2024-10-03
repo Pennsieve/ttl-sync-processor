@@ -39,3 +39,8 @@ func hashField(field any, fieldName string) (string, error) {
 func (s DatasetMetadata) ContributorsHash() (string, error) {
 	return hashField(s.Contributors, "contributors")
 }
+
+type SavedDatasetMetadata struct {
+	Contributors []Contributor
+	Subjects     []SavedSubject
+}

@@ -2,11 +2,12 @@ package fromrecord
 
 import (
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
+	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
-func ToSubject(record instance.Record) (metadata.Subject, error) {
-	subject := metadata.Subject{}
+func ToSubject(record instance.Record) (metadata.SavedSubject, error) {
+	subject := metadata.SavedSubject{PennsieveID: changesetmodels.PennsieveRecordID(record.ID)}
 	if err := checkRecordType(record, metadata.SubjectModelName); err != nil {
 		return subject, err
 	}

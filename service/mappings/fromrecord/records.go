@@ -7,7 +7,7 @@ import (
 	"log/slog"
 )
 
-func ToDatasetMetadata(reader *metadataclient.Reader) (*metadata.DatasetMetadata, error) {
+func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatasetMetadata, error) {
 	contributors, err := MapRecords(reader, metadata.ContributorModelName, ToContributor)
 	if err != nil {
 		return nil, err
@@ -16,7 +16,7 @@ func ToDatasetMetadata(reader *metadataclient.Reader) (*metadata.DatasetMetadata
 	if err != nil {
 		return nil, err
 	}
-	existing := &metadata.DatasetMetadata{
+	existing := &metadata.SavedDatasetMetadata{
 		Contributors: contributors,
 		Subjects:     subjects,
 	}
