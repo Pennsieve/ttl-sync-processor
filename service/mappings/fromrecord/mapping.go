@@ -29,11 +29,20 @@ func safeString(value any) string {
 	return value.(string)
 }
 
+// If safeStringSlice is passed nil, it returns an empty []string
+// If it is passed a []any, where the underlying elements are strings
+// it returns a []string with those values.
+// panics on anything else
 func safeStringSlice(value any) []string {
 	if value == nil {
 		return []string{}
 	}
-	return value.([]string)
+	anySlice := value.([]any)
+	strSlice := make([]string, len(anySlice))
+	for i := range anySlice {
+		strSlice[i] = anySlice[i].(string)
+	}
+	return strSlice
 }
 
 func checkRecordType(record instance.Record, expectedModelName string) error {

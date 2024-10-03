@@ -75,4 +75,6 @@ type RecordValue struct {
 	Name  string `json:"name"`
 }
 
-type RecordUpdate struct{}
+// RecordUpdate can be used as a payload for PUT /models/datasets/<dataset id>/concepts/<model id>/instances/<record id> to update values in record
+// Include both changed and unchanged values
+type RecordUpdate RecordCreate

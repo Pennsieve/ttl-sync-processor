@@ -12,8 +12,13 @@ func ToDatasetMetadata(reader *metadataclient.Reader) (*metadata.DatasetMetadata
 	if err != nil {
 		return nil, err
 	}
+	subjects, err := MapRecords(reader, metadata.SubjectModelName, ToSubject)
+	if err != nil {
+		return nil, err
+	}
 	existing := &metadata.DatasetMetadata{
 		Contributors: contributors,
+		Subjects:     subjects,
 	}
 	return existing, nil
 }

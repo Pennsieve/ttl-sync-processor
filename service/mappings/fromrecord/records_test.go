@@ -7,6 +7,18 @@ import (
 	"testing"
 )
 
+func TestToDatasetMetadata(t *testing.T) {
+	inputDirectory := "testdata/input"
+
+	reader, err := metadataclient.NewReader(inputDirectory)
+	require.NoError(t, err)
+
+	existingMetadata, err := ToDatasetMetadata(reader)
+	require.NoError(t, err)
+	assert.NotNil(t, existingMetadata)
+	assert.Len(t, existingMetadata.Contributors, 5)
+	assert.Len(t, existingMetadata.Subjects, 2)
+}
 func TestToDatasetMetadata_NoModels(t *testing.T) {
 	inputDirectory := "testdata/input_no_model"
 

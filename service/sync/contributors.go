@@ -3,6 +3,7 @@ package sync
 import (
 	"errors"
 	"fmt"
+	"github.com/pennsieve/processor-pre-metadata/client/models/datatypes"
 	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -67,23 +68,23 @@ func contributorsModelChanges(schemaData map[string]schema.Element) (*changesetm
 func contributorsPropertiesCreate() (changesetmodels.PropertiesCreate, error) {
 	var create []changesetmodels.PropertyCreate
 	var accumulatedErrors []error
-	create = appendStringPropertyCreate(create, metadata.FirstNameKey, "First Name", newStringPropertyCreate, &accumulatedErrors)
-	create = appendStringPropertyCreate(create, metadata.MiddleInitialKey, "Middle Initial", newStringPropertyCreate, &accumulatedErrors)
-	create = appendStringPropertyCreate(create, metadata.LastNameKey, "Last Name", newStringConceptTitlePropertyCreate, &accumulatedErrors)
-	create = appendStringPropertyCreate(create, metadata.DegreeKey, "Degree", newStringPropertyCreate, &accumulatedErrors)
-	create = appendStringPropertyCreate(create, metadata.ORCIDKey, "ORCID", newStringPropertyCreate, &accumulatedErrors)
-	create = appendStringPropertyCreate(create, metadata.NodeIDKey, "Node ID", newStringPropertyCreate, &accumulatedErrors)
+	create = appendSimplePropertyCreate(create, metadata.FirstNameKey, "First Name", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
+	create = appendSimplePropertyCreate(create, metadata.MiddleInitialKey, "Middle Initial", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
+	create = appendConceptTitlePropertyCreate(create, metadata.LastNameKey, "Last Name", newConceptTitlePropertyCreate, &accumulatedErrors)
+	create = appendSimplePropertyCreate(create, metadata.DegreeKey, "Degree", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
+	create = appendSimplePropertyCreate(create, metadata.ORCIDKey, "ORCID", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
+	create = appendSimplePropertyCreate(create, metadata.NodeIDKey, "Node ID", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
 	return create, errors.Join(accumulatedErrors...)
 }
 
 func contributorRecordCreate(contributor metadata.Contributor) changesetmodels.RecordCreate {
 	var values []changesetmodels.RecordValue
-	values = appendStringRecordValue(values, metadata.FirstNameKey, contributor.FirstName)
-	values = appendStringRecordValue(values, metadata.MiddleInitialKey, contributor.MiddleInitial)
-	values = appendStringRecordValue(values, metadata.LastNameKey, contributor.LastName)
-	values = appendStringRecordValue(values, metadata.DegreeKey, contributor.Degree)
-	values = appendStringRecordValue(values, metadata.ORCIDKey, contributor.ORCID)
-	values = appendStringRecordValue(values, metadata.NodeIDKey, contributor.NodeID)
+	values = appendNonEmptyRecordValue(values, metadata.FirstNameKey, contributor.FirstName)
+	values = appendNonEmptyRecordValue(values, metadata.MiddleInitialKey, contributor.MiddleInitial)
+	values = appendNonEmptyRecordValue(values, metadata.LastNameKey, contributor.LastName)
+	values = appendNonEmptyRecordValue(values, metadata.DegreeKey, contributor.Degree)
+	values = appendNonEmptyRecordValue(values, metadata.ORCIDKey, contributor.ORCID)
+	values = appendNonEmptyRecordValue(values, metadata.NodeIDKey, contributor.NodeID)
 
 	create := changesetmodels.RecordCreate{
 		Values: values,

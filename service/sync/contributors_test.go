@@ -1,7 +1,6 @@
 package sync
 
 import (
-	"github.com/google/uuid"
 	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
@@ -69,14 +68,7 @@ func modelDoesNotExist(t *testing.T) {
 }
 
 func modelExistsButNoExistingRecords(t *testing.T) {
-	schemaElement := schema.Element{
-		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        metadata.ContributorModelName,
-		DisplayName: metadata.ContributorDisplayName,
-	}
-	schemaData := map[string]schema.Element{metadata.ContributorModelName: schemaElement}
-
+	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	newContrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
 
@@ -84,7 +76,7 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaElement.ID, changes.ID)
+	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -132,13 +124,7 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noChanges(t *testing.T) {
-	schemaElement := schema.Element{
-		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        metadata.ContributorModelName,
-		DisplayName: metadata.ContributorDisplayName,
-	}
-	schemaData := map[string]schema.Element{metadata.ContributorModelName: schemaElement}
+	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -153,13 +139,7 @@ func noChanges(t *testing.T) {
 }
 
 func orderChange(t *testing.T) {
-	schemaElement := schema.Element{
-		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        metadata.ContributorModelName,
-		DisplayName: metadata.ContributorDisplayName,
-	}
-	schemaData := map[string]schema.Element{metadata.ContributorModelName: schemaElement}
+	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -172,7 +152,7 @@ func orderChange(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaElement.ID, changes.ID)
+	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -219,13 +199,7 @@ func orderChange(t *testing.T) {
 }
 
 func removeContributor(t *testing.T) {
-	schemaElement := schema.Element{
-		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        metadata.ContributorModelName,
-		DisplayName: metadata.ContributorDisplayName,
-	}
-	schemaData := map[string]schema.Element{metadata.ContributorModelName: schemaElement}
+	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -239,7 +213,7 @@ func removeContributor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaElement.ID, changes.ID)
+	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -286,13 +260,7 @@ func removeContributor(t *testing.T) {
 }
 
 func addContributor(t *testing.T) {
-	schemaElement := schema.Element{
-		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        metadata.ContributorModelName,
-		DisplayName: metadata.ContributorDisplayName,
-	}
-	schemaData := map[string]schema.Element{metadata.ContributorModelName: schemaElement}
+	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -305,7 +273,7 @@ func addContributor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaElement.ID, changes.ID)
+	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
