@@ -11,18 +11,18 @@ var logger = logging.PackageLogger("sync")
 
 func ComputeChangeset(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.Dataset, error) {
 	datasetChanges := &changesetmodels.Dataset{}
-	if err := appendModelChanges(datasetChanges, schemaData, old, new, ComputeContributorsChanges); err != nil {
+	if err := appendModelChanges(datasetChanges, schemaData, old.Contributors, new.Contributors, ComputeContributorsChanges); err != nil {
 		return nil, err
 	}
-	if err := appendModelChanges(datasetChanges, schemaData, old, new, ComputeSubjectChanges); err != nil {
+	if err := appendModelChanges(datasetChanges, schemaData, old.Subjects, new.Subjects, ComputeSubjectChanges); err != nil {
 		return nil, err
 	}
 	return datasetChanges, nil
 }
 
-type modelChangeComputer func(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error)
+type modelChangeComputer[OLD, NEW any] func(schemaData map[string]schema.Element, old []OLD, new []NEW) (*changesetmodels.ModelChanges, error)
 
-func appendModelChanges(datasetChanges *changesetmodels.Dataset, schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata, computer modelChangeComputer) error {
+func appendModelChanges[OLD, NEW any](datasetChanges *changesetmodels.Dataset, schemaData map[string]schema.Element, old []OLD, new []NEW, computer modelChangeComputer[OLD, NEW]) error {
 	modelChanges, err := computer(schemaData, old, new)
 	if err != nil {
 		return err

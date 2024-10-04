@@ -10,12 +10,12 @@ import (
 	"log/slog"
 )
 
-func ComputeContributorsChanges(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error) {
-	oldHash, err := metadata.ComputeHash(old.Contributors)
+func ComputeContributorsChanges(schemaData map[string]schema.Element, old []metadata.Contributor, new []metadata.Contributor) (*changesetmodels.ModelChanges, error) {
+	oldHash, err := metadata.ComputeHash(old)
 	if err != nil {
 		return nil, fmt.Errorf("error computing hash of existing contributors metadata: %w", err)
 	}
-	newHash, err := metadata.ComputeHash(new.Contributors)
+	newHash, err := metadata.ComputeHash(new)
 	if err != nil {
 		return nil, fmt.Errorf("error computing hash of incoming contributors metadata: %w", err)
 	}
@@ -28,13 +28,13 @@ func ComputeContributorsChanges(schemaData map[string]schema.Element, old *metad
 		return nil, err
 	}
 	logger.Info("deleting and creating records",
-		slog.String("name", metadata.ContributorModelName),
-		slog.Int("toDeleteCount", len(old.Contributors)),
-		slog.Int("toCreateCount", len(new.Contributors)),
+		slog.String("ModelName", metadata.ContributorModelName),
+		slog.Int("toDeleteCount", len(old)),
+		slog.Int("toCreateCount", len(new)),
 	)
 	// hashes are different, so clear out existing records and create new ones from incoming
 	changes.Records.DeleteAll = true
-	for _, contributor := range new.Contributors {
+	for _, contributor := range new {
 		create := contributorRecordCreate(contributor)
 		changes.Records.Create = append(changes.Records.Create, create)
 	}
@@ -44,10 +44,10 @@ func ComputeContributorsChanges(schemaData map[string]schema.Element, old *metad
 func contributorsModelChanges(schemaData map[string]schema.Element) (*changesetmodels.ModelChanges, error) {
 	changes := &changesetmodels.ModelChanges{}
 	if model, modelExists := schemaData[metadata.ContributorModelName]; modelExists {
-		logger.Info("model exists", slog.String("name", metadata.ContributorModelName), slog.String("id", model.ID))
+		logger.Info("model exists", slog.String("modelName", metadata.ContributorModelName), slog.String("modelID", model.ID))
 		changes.ID = model.ID
 	} else {
-		logger.Info("model must be created", slog.String("name", metadata.ContributorModelName))
+		logger.Info("model must be created", slog.String("modelName", metadata.ContributorModelName))
 		propsCreate, err := contributorsPropertiesCreate()
 		if err != nil {
 			return nil, err

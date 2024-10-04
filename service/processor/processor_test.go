@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"log/slog"
 	"os"
+	"slices"
 	"testing"
 )
 
@@ -36,16 +37,25 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	require.NoError(t, json.NewDecoder(changesetFile).Decode(&changeset))
 
 	modelChanges := changeset.Models
-	assert.Len(t, modelChanges, 1)
-	contributorChanges := modelChanges[0]
+	assert.Len(t, modelChanges, 2)
+
+	// Contributors
+	contributorChanges := findModelChangesByID(t, changeset.Models, "d77470bb-f39d-49ee-aa17-783e128cdfa0")
 	// model exists, so ID should be present and Create nil
-	assert.Equal(t, "d77470bb-f39d-49ee-aa17-783e128cdfa0", contributorChanges.ID)
 	assert.Nil(t, contributorChanges.Create)
 
 	assert.True(t, contributorChanges.Records.DeleteAll)
 	assert.Len(t, contributorChanges.Records.Create, 3)
 	assert.Empty(t, contributorChanges.Records.Update)
 	assert.Empty(t, contributorChanges.Records.Delete)
+
+	// Subjects
+	subjectChanges := findModelChangesByID(t, changeset.Models, "44fe1f90-f7b5-407a-8689-c512d7f41b7d")
+	assert.Nil(t, subjectChanges.Create)
+	assert.False(t, subjectChanges.Records.DeleteAll)
+	assert.Empty(t, subjectChanges.Records.Delete)
+	assert.Empty(t, subjectChanges.Records.Update)
+	assert.Len(t, subjectChanges.Records.Create, 2)
 }
 
 func TestCurationExportSyncProcessor_ReadExistingPennsieveMetadata(t *testing.T) {
@@ -76,4 +86,12 @@ func TestCurationExportSyncProcessor_ReadCurationExport(t *testing.T) {
 	assert.NotNil(t, export)
 	assert.Len(t, export.Contributors, 3)
 
+}
+
+func findModelChangesByID(t *testing.T, modelChanges []changesetmodels.ModelChanges, modelID string) changesetmodels.ModelChanges {
+	index := slices.IndexFunc(modelChanges, func(changes changesetmodels.ModelChanges) bool {
+		return changes.ID == modelID
+	})
+	require.GreaterOrEqual(t, index, 0)
+	return modelChanges[index]
 }

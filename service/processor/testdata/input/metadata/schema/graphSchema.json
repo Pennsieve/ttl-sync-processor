@@ -13,5 +13,20 @@
     "type": "concept",
     "updatedAt": "2024-10-01T18:49:49.930000+00:00",
     "updatedBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42"
+  },
+  {
+    "count": 2,
+    "createdAt": "2024-10-03T02:51:28.105000+00:00",
+    "createdBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "description": "",
+    "displayName": "Subject",
+    "id": "44fe1f90-f7b5-407a-8689-c512d7f41b7d",
+    "locked": false,
+    "name": "subject",
+    "propertyCount": 3,
+    "templateId": null,
+    "type": "concept",
+    "updatedAt": "2024-10-03T02:51:28.105000+00:00",
+    "updatedBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42"
   }
 ]

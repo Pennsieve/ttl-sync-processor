@@ -68,6 +68,11 @@ func (p *CurationExportSyncProcessor) ChangesetFilePath() string {
 func (p *CurationExportSyncProcessor) writeChangeset(changes *changesetmodels.Dataset) error {
 	filePath := p.ChangesetFilePath()
 	file, err := os.Create(filePath)
+	defer func() {
+		if err := file.Close(); err != nil {
+			logger.Warn("error closing changeset file", slog.String("path", filePath), slog.Any("error", err))
+		}
+	}()
 	if err != nil {
 		return fmt.Errorf("error creating changeset file %s: %w", filePath, err)
 	}

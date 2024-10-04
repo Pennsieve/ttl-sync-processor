@@ -9,17 +9,28 @@ import (
 	"log/slog"
 )
 
-func ComputeSubjectChanges(schemaData map[string]schema.Element, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.ModelChanges, error) {
-	modelChanges, err := addChanges(old.Subjects, new.Subjects)
+func ComputeSubjectChanges(schemaData map[string]schema.Element, old []metadata.SavedSubject, new []metadata.Subject) (*changesetmodels.ModelChanges, error) {
+	modelChanges, err := addChanges(old, new)
 	if err != nil {
 		return nil, err
 	}
+	modelLogger := logger.With(slog.String("modelName", metadata.SubjectModelName))
 	if modelChanges == nil {
+		modelLogger.Info("no changes")
 		return nil, nil
 	}
 	if err := subjectSetIDOrCreate(modelChanges, schemaData); err != nil {
 		return nil, err
 	}
+	deleteMessage := slog.Int("deleteCount", len(modelChanges.Records.Delete))
+	if modelChanges.Records.DeleteAll {
+		deleteMessage = slog.Int("deleteAllCount", len(old))
+	}
+	modelLogger.Info("change summary",
+		deleteMessage,
+		slog.Int("createCount", len(modelChanges.Records.Create)),
+		slog.Int("updateCount", len(modelChanges.Records.Update)),
+	)
 	return modelChanges, nil
 }
 
@@ -91,10 +102,10 @@ func updateSubjectRecord(oldSubject metadata.SavedSubject, newSubject metadata.S
 
 func subjectSetIDOrCreate(modelChanges *changesetmodels.ModelChanges, schemaData map[string]schema.Element) error {
 	if model, modelExists := schemaData[metadata.SubjectModelName]; modelExists {
-		logger.Info("model exists", slog.String("name", metadata.SubjectModelName), slog.String("id", model.ID))
+		logger.Info("model exists", slog.String("modelName", metadata.SubjectModelName), slog.String("modelID", model.ID))
 		modelChanges.ID = model.ID
 	} else {
-		logger.Info("model must be created", slog.String("name", metadata.SubjectModelName))
+		logger.Info("model must be created", slog.String("modelName", metadata.SubjectModelName))
 		propsCreate, err := subjectPropertiesCreate()
 		if err != nil {
 			return err
