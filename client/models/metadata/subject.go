@@ -17,7 +17,15 @@ type Subject struct {
 	SpeciesSynonyms []string `json:"species_synonyms,omitempty"`
 }
 
+func (s Subject) GetID() string {
+	return s.ID
+}
+
 type SavedSubject struct {
 	PennsieveID changesetmodels.PennsieveRecordID `json:"-"`
 	Subject
+}
+
+func (ss SavedSubject) GetPennsieveID() changesetmodels.PennsieveRecordID {
+	return ss.PennsieveID
 }

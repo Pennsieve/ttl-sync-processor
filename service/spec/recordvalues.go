@@ -1,4 +1,4 @@
-package sync
+package spec
 
 import (
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
