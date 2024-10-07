@@ -16,4 +16,5 @@ func TestToDatasetMetadata(t *testing.T) {
 	require.NoError(t, err)
 	assert.Len(t, datasetMetadata.Contributors, 3)
 	assert.Len(t, datasetMetadata.Subjects, 4)
+	assert.Len(t, datasetMetadata.Samples, 3)
 }

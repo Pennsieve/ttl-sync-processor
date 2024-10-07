@@ -16,5 +16,9 @@ func ToDatasetMetadata(export *curation.DatasetExport) (*metadata.DatasetMetadat
 	if err != nil {
 		return nil, err
 	}
+	exported.Samples, err = MapSlice(export.Samples, ToSample)
+	if err != nil {
+		return nil, err
+	}
 	return exported, nil
 }

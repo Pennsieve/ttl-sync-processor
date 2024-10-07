@@ -179,5 +179,69 @@
       "subject_experimental_group": "Something, chronic",
       "subject_id": "5061b8e3-086b-4e87-b2f0-08f1a5b96679"
     }
+  ],
+  "samples": [
+    {
+      "age": {
+        "magnitude": 26,
+        "type": "quantity",
+        "units": "week"
+      },
+      "experimental_group": "control",
+      "primary_key": "f61ed5a9-5a69-49f7-9113-6447ee9e668b",
+      "rrid_for_strain": {
+        "id": "RRID:RGD_12910483",
+        "label": "Slc:SD",
+        "synonyms": [
+          "Slc:SD"
+        ],
+        "system": "Rrid",
+        "type": "identifier"
+      },
+      "sample_id": "09d2a327-be38-403a-884d-a4d1d98b732c",
+      "species": {
+        "id": "http://purl.obolibrary.org/obo/NCBITaxon_10116",
+        "label": "Rattus norvegicus",
+        "synonyms": [
+          "brown rat",
+          "Norway rat",
+          "rat",
+          "Mus norvegicus",
+          "rats"
+        ],
+        "system": "OntTerm",
+        "type": "identifier"
+      },
+      "specimen_anatomical_location": [
+        "dentate gyrus"
+      ],
+      "specimen_type": "tissue",
+      "strain": "Slc:SD Sprague-Dawley Derived",
+      "subject_id": "f1027e6e-17cf-45d7-8b57-4c91bfd93fce"
+    },
+    {
+      "primary_key": "ef07f30e-ea93-4221-86e2-0be3a278ff55",
+      "sample_anatomical_location": "lower gastrointestinal tract",
+      "sample_experimental_group": "Control, chronic",
+      "sample_id": "80e9d14c-188e-476d-99ae-464da9e68bc3",
+      "sample_type": "tissue",
+      "subject_id": "f1027e6e-17cf-45d7-8b57-4c91bfd93fce"
+    },
+    {
+      "image_of_area_of_interest": "f014ac61-1b8a-4ffd-9b78-572e44e50b20/008.jpeg; f014ac61-1b8a-4ffd-9b78-572e44e50b20/009.jpeg",
+      "image_of_cap": "0d03d888-37f7-4747-8018-a96a3117395/012.jpeg",
+      "image_of_specific_neurons_marked": "817b8faf-0389-4b59-b09d-3e40f684c1e7/010.jpeg; 817b8faf-0389-4b59-b09d-3e40f684c1e7/011.jpeg;",
+      "image_of_tissue_after_neurons_picked": "1e6f5bef-ae1c-4d0e-b247-7f188957e20c/013.jpeg; 1e6f5bef-ae1c-4d0e-b247-7f188957e20c/014.jpeg",
+      "lcm_date_picked": "2111-01-11",
+      "overview_image_of_section": "edc7b9e8-d777-41c1-bd06-0bcadd1ea2e3/032.jpeg",
+      "primary_key": "b07f1212-72c6-407e-b7b0-2020c9a35b19",
+      "sample_anatomical_location": "heart",
+      "sample_id": "70a38ffa-15f6-4fdc-87ea-2f3a9b19f995",
+      "sample_type": "cell",
+      "subject_id": "9b942959-2ebb-4680-b3f7-6d1cdbbe706d",
+      "uv_laser_cut": "5b69ba59-7eb0-4f9f-a563-c9d4afb0a95c/031.jpeg",
+      "uv_laser_marked": "9a2a36c5-5e47-4a14-8bed-abe971084097/030.jpeg",
+      "was_derived_from": "3513ebfd-101a-4124-b174-254b594feb35"
+    }
   ]
 }

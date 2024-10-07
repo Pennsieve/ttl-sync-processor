@@ -6,6 +6,7 @@ type DatasetExport struct {
 	ID           string              `json:"id"`
 	Contributors []Contributor       `json:"contributors"`
 	DirStructure []DirStructureEntry `json:"dir_structure"`
+	Samples      []Sample            `json:"samples"`
 	SpecimenDirs SpecimenDirs        `json:"specimen_dirs"`
 	Subjects     []Subject           `json:"subjects"`
 }
@@ -31,5 +32,10 @@ func (d *DatasetExport) WithSpecimenDirs(dirs SpecimenDirs) *DatasetExport {
 
 func (d *DatasetExport) WithSubjects(subjects ...Subject) *DatasetExport {
 	d.Subjects = append(d.Subjects, subjects...)
+	return d
+}
+
+func (d *DatasetExport) WithSamples(samples ...Sample) *DatasetExport {
+	d.Samples = append(d.Samples, samples...)
 	return d
 }
