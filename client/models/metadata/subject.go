@@ -22,10 +22,10 @@ func (s Subject) GetID() string {
 }
 
 type SavedSubject struct {
-	PennsieveID changesetmodels.PennsieveRecordID `json:"-"`
+	PennsieveID changesetmodels.PennsieveInstanceID `json:"-"`
 	Subject
 }
 
-func (ss SavedSubject) GetPennsieveID() changesetmodels.PennsieveRecordID {
+func (ss SavedSubject) GetPennsieveID() changesetmodels.PennsieveInstanceID {
 	return ss.PennsieveID
 }

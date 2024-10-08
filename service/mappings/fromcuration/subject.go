@@ -5,7 +5,7 @@ import (
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
-// ToSubject is a Mapping from curation.Subject to metadata.Subject
+// ToSubject is a mappings.Mapping from curation.Subject to metadata.Subject
 func ToSubject(exportedSubject curation.Subject) (metadata.Subject, error) {
 	speciesRaw, err := exportedSubject.GetSpecies()
 	if err != nil {

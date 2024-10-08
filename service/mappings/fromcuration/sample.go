@@ -5,7 +5,14 @@ import (
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
-// ToSample is a Mapping from curation.Sample to metadata.Sample
+// ToSample is a mappings.Mapping from curation.Sample to metadata.Sample
 func ToSample(exportedSample curation.Sample) (metadata.Sample, error) {
 	return metadata.Sample{ID: exportedSample.ID}, nil
+}
+
+func ToSampleSubjectLink(exportedSample curation.Sample) (metadata.SampleSubjectLink, error) {
+	return metadata.SampleSubjectLink{
+		SampleID:  exportedSample.ID,
+		SubjectID: exportedSample.SubjectID,
+	}, nil
 }

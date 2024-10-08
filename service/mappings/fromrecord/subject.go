@@ -7,7 +7,7 @@ import (
 )
 
 func ToSubject(record instance.Record) (metadata.SavedSubject, error) {
-	subject := metadata.SavedSubject{PennsieveID: changesetmodels.PennsieveRecordID(record.ID)}
+	subject := metadata.SavedSubject{PennsieveID: changesetmodels.PennsieveInstanceID(record.ID)}
 	if err := checkRecordType(record, metadata.SubjectModelName); err != nil {
 		return subject, err
 	}

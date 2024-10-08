@@ -5,8 +5,8 @@ import (
 	"fmt"
 )
 
-// PennsieveRecordID is the internal ID of the record in Pennsieve. Not usually seen by user, but needed for API calls
-type PennsieveRecordID string
+// PennsieveInstanceID is the internal ID of the record in Pennsieve. Not usually seen by user, but needed for API calls
+type PennsieveInstanceID string
 
 type ModelChanges struct {
 	// The ID of the model. Can be empty or missing if the model does not exist.
@@ -61,7 +61,7 @@ type RecordChanges struct {
 	// If DeleteAll is true, delete all records for the model. Model.ID should be non-empty in this case.
 	DeleteAll bool `json:"delete_all"`
 	// A list of RecordIDs to delete
-	Delete []PennsieveRecordID `json:"delete"`
+	Delete []PennsieveInstanceID `json:"delete"`
 	// Create are records that should be created
 	Create []RecordCreate `json:"create"`
 	// Update are records that should be updated
@@ -85,6 +85,6 @@ type RecordValues struct {
 // PennsieveID is omitted from json serialization so that this struct's serialized form can be used as a payload without including the record's id
 // which belongs in the URL, not payload
 type RecordUpdate struct {
-	PennsieveID PennsieveRecordID `json:"-"`
+	PennsieveID PennsieveInstanceID `json:"-"`
 	RecordValues
 }

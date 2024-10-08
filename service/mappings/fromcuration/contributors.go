@@ -8,7 +8,7 @@ import (
 	"unicode/utf8"
 )
 
-// ToContributor is a Mapping from curation.Contributor to metadata.Contributor
+// ToContributor is a mappings.Mapping from curation.Contributor to metadata.Contributor
 func ToContributor(exportedContributor curation.Contributor) (metadata.Contributor, error) {
 	contrib := metadata.Contributor{
 		FirstName: exportedContributor.FirstName,

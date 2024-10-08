@@ -1,6 +1,7 @@
 package fromcuration
 
 import (
+	"github.com/pennsieve/ttl-sync-processor/service/mappings"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
@@ -12,7 +13,7 @@ func TestToContributor(t *testing.T) {
 	datasetExport, err := UnmarshalDatasetExport(curationExportPath)
 	require.NoError(t, err)
 
-	exported, err := MapSlice(datasetExport.Contributors, ToContributor)
+	exported, err := mappings.MapSlice(datasetExport.Contributors, ToContributor)
 	require.NoError(t, err)
 	assert.NotNil(t, exported)
 	assert.Len(t, exported, 3)

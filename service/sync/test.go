@@ -37,7 +37,7 @@ func findValueByName(t *testing.T, values []changesetmodels.RecordValue, name st
 	return values[index]
 }
 
-func findRecordUpdateByPennsieveID(t *testing.T, updates []changesetmodels.RecordUpdate, pennsieveID changesetmodels.PennsieveRecordID) changesetmodels.RecordUpdate {
+func findRecordUpdateByPennsieveID(t *testing.T, updates []changesetmodels.RecordUpdate, pennsieveID changesetmodels.PennsieveInstanceID) changesetmodels.RecordUpdate {
 	index := slices.IndexFunc(updates, func(update changesetmodels.RecordUpdate) bool {
 		return update.PennsieveID == pennsieveID
 	})

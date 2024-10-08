@@ -1,0 +1,42 @@
+[
+  {
+    "createdAt": "2024-10-07T19:23:44.657000+00:00",
+    "createdBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "id": "b66cbf32-cb9f-4126-8182-01bd00ad7b17",
+    "type": "sample",
+    "updatedAt": "2024-10-07T19:23:44.657000+00:00",
+    "updatedBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "values": [
+      {
+        "conceptTitle": true,
+        "dataType": "String",
+        "default": false,
+        "displayName": "ID",
+        "locked": false,
+        "name": "id",
+        "required": true,
+        "value": "967af4ee-eca9-4977-a74d-88713b82975f"
+      }
+    ]
+  },
+  {
+    "createdAt": "2024-10-07T19:24:49.332000+00:00",
+    "createdBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "id": "60f21224-481c-4e29-a325-c896f184aebe",
+    "type": "sample",
+    "updatedAt": "2024-10-07T19:24:49.332000+00:00",
+    "updatedBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "values": [
+      {
+        "conceptTitle": true,
+        "dataType": "String",
+        "default": false,
+        "displayName": "ID",
+        "locked": false,
+        "name": "id",
+        "required": true,
+        "value": "09d2a327-be38-403a-884d-a4d1d98b732c"
+      }
+    ]
+  }
+]

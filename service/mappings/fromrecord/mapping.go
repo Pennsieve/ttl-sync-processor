@@ -8,20 +8,6 @@ import (
 
 var logger = logging.PackageLogger("fromrecord")
 
-type Mapping[T any] func(record instance.Record) (T, error)
-
-func MapSlice[T any](records []instance.Record, fromRecord Mapping[T]) ([]T, error) {
-	var results []T
-	for _, r := range records {
-		result, err := fromRecord(r)
-		if err != nil {
-			return nil, err
-		}
-		results = append(results, result)
-	}
-	return results, nil
-}
-
 func safeString(value any) string {
 	if value == nil {
 		return ""
@@ -48,6 +34,13 @@ func safeStringSlice(value any) []string {
 func checkRecordType(record instance.Record, expectedModelName string) error {
 	if record.Type != expectedModelName {
 		return fmt.Errorf("record %s is not a %s instance: %s", record.ID, expectedModelName, record.Type)
+	}
+	return nil
+}
+
+func checkLinkedPropertyName(linkedProperty instance.LinkedProperty, expectedLinkedPropertyName string) error {
+	if linkedProperty.Name != expectedLinkedPropertyName {
+		return fmt.Errorf("linked property %s is not named %s: %s", linkedProperty.Id, expectedLinkedPropertyName, linkedProperty.Name)
 	}
 	return nil
 }

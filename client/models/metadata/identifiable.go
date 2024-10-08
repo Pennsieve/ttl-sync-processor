@@ -3,7 +3,7 @@ package metadata
 import changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 
 type Saved interface {
-	GetPennsieveID() changesetmodels.PennsieveRecordID
+	GetPennsieveID() changesetmodels.PennsieveInstanceID
 }
 
 type IDer interface {

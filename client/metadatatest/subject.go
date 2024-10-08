@@ -28,7 +28,7 @@ func (b *SubjectBuilder) Build() metadata.Subject {
 
 func NewSavedSubject(subject metadata.Subject) metadata.SavedSubject {
 	return metadata.SavedSubject{
-		PennsieveID: changesetmodels.PennsieveRecordID(uuid.NewString()),
+		PennsieveID: changesetmodels.PennsieveInstanceID(uuid.NewString()),
 		Subject:     subject,
 	}
 }
