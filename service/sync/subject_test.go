@@ -153,7 +153,7 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noSubjectChanges(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()
@@ -171,7 +171,7 @@ func noSubjectChanges(t *testing.T) {
 }
 
 func subjectOrderDoesNotMatter(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()

@@ -11,7 +11,7 @@ type DatasetMetadata struct {
 	Contributors   []Contributor
 	Subjects       []Subject
 	Samples        []Sample
-	SampleSubjects []SampleSubjectLink
+	SampleSubjects []SampleSubject
 }
 
 func computeHash(value any) (string, error) {
@@ -46,5 +46,5 @@ type SavedDatasetMetadata struct {
 	Contributors   []Contributor
 	Subjects       []SavedSubject
 	Samples        []SavedSample
-	SampleSubjects []SavedSampleSubjectLink
+	SampleSubjects []SavedSampleSubjectInstance
 }

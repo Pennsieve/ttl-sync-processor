@@ -10,8 +10,8 @@ func ToSample(exportedSample curation.Sample) (metadata.Sample, error) {
 	return metadata.Sample{ID: exportedSample.ID}, nil
 }
 
-func ToSampleSubjectLink(exportedSample curation.Sample) (metadata.SampleSubjectLink, error) {
-	return metadata.SampleSubjectLink{
+func ToSampleSubjectLink(exportedSample curation.Sample) (metadata.SampleSubject, error) {
+	return metadata.SampleSubject{
 		SampleID:  exportedSample.ID,
 		SubjectID: exportedSample.SubjectID,
 	}, nil

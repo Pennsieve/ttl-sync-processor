@@ -23,18 +23,13 @@ func (s Sample) GetID() string {
 const SampleSubjectLinkName = SubjectModelName
 const SampleSubjectLinkDisplayName = SubjectDisplayName
 
-type SampleSubjectLink struct {
+type SampleSubject struct {
 	SampleID  string
 	SubjectID string
-	//id is not exported. just a cached value for GetID()
-	id string
 }
 
-func (l SampleSubjectLink) GetID() string {
-	if len(l.id) == 0 {
-		l.id = fmt.Sprintf("%s:%s", l.SampleID, l.SubjectID)
-	}
-	return l.id
+func (l SampleSubject) GetID() string {
+	return fmt.Sprintf("%s:%s", l.SampleID, l.SubjectID)
 }
 
 type SavedSample struct {
@@ -46,11 +41,17 @@ func (ss SavedSample) GetPennsieveID() changesetmodels.PennsieveInstanceID {
 	return ss.PennsieveID
 }
 
-type SavedSampleSubjectLink struct {
-	PennsieveID changesetmodels.PennsieveInstanceID `json:"-"`
+type SampleSubjectLink link
+
+type SampleSubjectInstance struct {
 	SampleSubjectLink
+	SampleSubject
+}
+type SavedSampleSubjectInstance struct {
+	PennsieveID changesetmodels.PennsieveInstanceID `json:"-"`
+	SampleSubjectInstance
 }
 
-func (sl SavedSampleSubjectLink) GetPennsieveID() changesetmodels.PennsieveInstanceID {
+func (sl SavedSampleSubjectInstance) GetPennsieveID() changesetmodels.PennsieveInstanceID {
 	return sl.PennsieveID
 }

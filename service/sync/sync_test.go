@@ -31,20 +31,24 @@ func emptyChangesets(t *testing.T) {
 func smokeTest(t *testing.T) {
 	schemaData := newTestSchemaData().
 		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
-		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
+		WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
 
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()
 	subject := metadatatest.NewSubjectBuilder().Build()
+	sample := metadatatest.NewSampleBuilder().Build()
+
 	changes, err := ComputeChangeset(schemaData,
 		&metadata.SavedDatasetMetadata{},
 		&metadata.DatasetMetadata{
 			Contributors: []metadata.Contributor{contributor},
 			Subjects:     []metadata.Subject{subject},
+			Samples:      []metadata.Sample{sample},
 		},
 	)
 	require.NoError(t, err)
 
-	assert.Len(t, changes.Models, 2)
+	assert.Len(t, changes.Models, 3)
 	for _, m := range changes.Models {
 		require.NotNil(t, m.ID)
 		assert.Len(t, m.Records.Create, 1)

@@ -22,6 +22,9 @@ func ComputeChangeset(schemaData map[string]schema.Element, old *metadata.SavedD
 	if err := appendModelChanges(datasetChanges, schemaData, old.Subjects, new.Subjects, ComputeSubjectChanges); err != nil {
 		return nil, err
 	}
+	if err := appendModelChanges(datasetChanges, schemaData, old.Samples, new.Samples, ComputeSampleChanges); err != nil {
+		return nil, err
+	}
 	return datasetChanges, nil
 }
 

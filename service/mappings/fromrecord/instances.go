@@ -21,7 +21,8 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatas
 	if existing.Samples, err = MapRecords(reader, metadata.SampleModelName, ToSample); err != nil {
 		return nil, err
 	}
-	if existing.SampleSubjects, err = MapLinkedProperties(reader, metadata.SampleSubjectLinkName, ToSampleSubjectLink); err != nil {
+	sampleSubjectMapping := NewSampleStoreMapping(existing.Samples, existing.Subjects)
+	if existing.SampleSubjects, err = MapLinkedProperties(reader, metadata.SampleSubjectLinkName, sampleSubjectMapping); err != nil {
 		return nil, err
 	}
 	return existing, nil
