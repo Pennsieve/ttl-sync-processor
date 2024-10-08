@@ -80,11 +80,10 @@ type RecordValues struct {
 	Values []RecordValue `json:"values"`
 }
 
-// RecordUpdate can be used as a payload for PUT /models/datasets/<dataset id>/concepts/<model id>/instances/<record id> to update values in record
+// RecordUpdate wraps a RecordValues that can be used as a payload for PUT /models/datasets/<dataset id>/concepts/<model id>/instances/<record id> to update values in record
 // Include both changed and unchanged values
-// PennsieveID is omitted from json serialization so that this struct's serialized form can be used as a payload without including the record's id
-// which belongs in the URL, not payload
+// The PennsieveID is not part of the payload, but is the record id needed as a request path parameter
 type RecordUpdate struct {
-	PennsieveID PennsieveInstanceID `json:"-"`
+	PennsieveID PennsieveInstanceID `json:"pennsieve_id"`
 	RecordValues
 }

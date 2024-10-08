@@ -25,7 +25,7 @@ func emptyChangesets(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 	assert.Empty(t, changes.Models)
-	assert.Empty(t, changes.Relationships)
+	assert.Empty(t, changes.LinkedProperties)
 }
 
 func smokeTest(t *testing.T) {
