@@ -37,7 +37,7 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	require.NoError(t, json.NewDecoder(changesetFile).Decode(&changeset))
 
 	modelChanges := changeset.Models
-	assert.Len(t, modelChanges, 2)
+	assert.Len(t, modelChanges, 3)
 
 	// Contributors
 	contributorChanges := findModelChangesByID(t, changeset.Models, "d77470bb-f39d-49ee-aa17-783e128cdfa0")
@@ -56,6 +56,14 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	assert.Empty(t, subjectChanges.Records.Delete)
 	assert.Empty(t, subjectChanges.Records.Update)
 	assert.Len(t, subjectChanges.Records.Create, 2)
+
+	// Samples
+	sampleChanges := findModelChangesByID(t, changeset.Models, "29756423-00de-42f8-8706-acdcb1823685")
+	assert.Nil(t, sampleChanges.Create)
+	assert.False(t, sampleChanges.Records.DeleteAll)
+	assert.Len(t, sampleChanges.Records.Delete, 1)
+	assert.Empty(t, sampleChanges.Records.Update)
+	assert.Len(t, sampleChanges.Records.Create, 2)
 }
 
 func TestCurationExportSyncProcessor_ReadExistingPennsieveMetadata(t *testing.T) {
