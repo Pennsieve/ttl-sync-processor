@@ -2,14 +2,14 @@ package sync
 
 import (
 	"fmt"
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/pennsieve/ttl-sync-processor/service/spec"
 	"log/slog"
 )
 
-func ComputeContributorsChanges(schemaData map[string]schema.Element, old []metadata.Contributor, new []metadata.Contributor) (*changesetmodels.ModelChanges, error) {
+func ComputeContributorsChanges(schemaData *metadataclient.Schema, old []metadata.Contributor, new []metadata.Contributor) (*changesetmodels.ModelChanges, error) {
 	oldHash, err := metadata.ComputeHash(old)
 	if err != nil {
 		return nil, fmt.Errorf("error computing hash of existing contributors metadata: %w", err)

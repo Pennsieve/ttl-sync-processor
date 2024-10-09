@@ -2,6 +2,7 @@ package sync
 
 import (
 	"github.com/google/uuid"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/stretchr/testify/require"
@@ -9,25 +10,30 @@ import (
 	"testing"
 )
 
-func newModelSchemaElement(modelName, displayName string) schema.Element {
+func newSchemaElement(elementName, elementDisplayName string, elementType schema.Type) schema.Element {
 	return schema.Element{
 		ID:          uuid.NewString(),
-		Type:        string(schema.ModelType),
-		Name:        modelName,
-		DisplayName: displayName,
+		Type:        string(elementType),
+		Name:        elementName,
+		DisplayName: elementDisplayName,
 	}
 }
 
-type testSchemaData map[string]schema.Element
+type testSchemaData []schema.Element
 
 func newTestSchemaData() testSchemaData {
-	return map[string]schema.Element{}
+	return []schema.Element{}
 }
 
 func (d testSchemaData) WithModel(modelName, displayName string) testSchemaData {
-	d[modelName] = newModelSchemaElement(modelName, displayName)
-	return d
+	return append(d, newSchemaElement(modelName, displayName, schema.ModelType))
 }
+
+func (d testSchemaData) WithLinkedProperty(linkedPropertyName, displayName string) testSchemaData {
+	return append(d, newSchemaElement(linkedPropertyName, displayName, schema.LinkedPropertyType))
+}
+
+var emptySchema = metadataclient.NewSchema(nil)
 
 func findValueByName(t *testing.T, values []changesetmodels.RecordValue, name string) changesetmodels.RecordValue {
 	index := slices.IndexFunc(values, func(value changesetmodels.RecordValue) bool {

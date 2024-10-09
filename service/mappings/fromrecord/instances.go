@@ -29,7 +29,7 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatas
 }
 
 func MapRecords[To any](reader *metadataclient.Reader, modelName string, mapping mappings.Mapping[instance.Record, To]) ([]To, error) {
-	model, modelExists := reader.ModelNamesToSchemaElements[modelName]
+	model, modelExists := reader.Schema.ModelByName(modelName)
 	if !modelExists {
 		logger.Warn("model does not exist", slog.String("modelName", modelName))
 		return []To{}, nil
@@ -50,7 +50,7 @@ func MapRecords[To any](reader *metadataclient.Reader, modelName string, mapping
 }
 
 func MapLinkedProperties[To any](reader *metadataclient.Reader, linkedPropertyName string, mapping mappings.Mapping[instance.LinkedProperty, To]) ([]To, error) {
-	linkedProperty, linkedPropertyExists := reader.LinkedPropNamesToSchemaElements[linkedPropertyName]
+	linkedProperty, linkedPropertyExists := reader.Schema.LinkedPropertyByName(linkedPropertyName)
 	if !linkedPropertyExists {
 		logger.Warn("linkedProperty does not exist", slog.String("linkedPropertyName", linkedPropertyName))
 		return []To{}, nil

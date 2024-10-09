@@ -40,7 +40,7 @@ func checkRecordType(record instance.Record, expectedModelName string) error {
 
 func checkLinkedPropertyName(linkedProperty instance.LinkedProperty, expectedLinkedPropertyName string) error {
 	if linkedProperty.Name != expectedLinkedPropertyName {
-		return fmt.Errorf("linked property %s is not named %s: %s", linkedProperty.Id, expectedLinkedPropertyName, linkedProperty.Name)
+		return fmt.Errorf("linked property %s is not named %s: %s", linkedProperty.ID, expectedLinkedPropertyName, linkedProperty.Name)
 	}
 	return nil
 }

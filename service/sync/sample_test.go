@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -26,7 +26,7 @@ func TestComputeSampleChanges(t *testing.T) {
 }
 
 func emptyChangesSample(t *testing.T) {
-	changes, err := ComputeSampleChanges(map[string]schema.Element{}, []metadata.SavedSample{}, []metadata.Sample{})
+	changes, err := ComputeSampleChanges(emptySchema, []metadata.SavedSample{}, []metadata.Sample{})
 	require.NoError(t, err)
 	// Nil changes means no updates required.
 	require.Nil(t, changes)
@@ -35,7 +35,7 @@ func emptyChangesSample(t *testing.T) {
 func sampleModelDoesNotExist(t *testing.T) {
 	newSample1 := metadatatest.NewSampleBuilder().Build()
 	newSample2 := metadatatest.NewSampleBuilder().Build()
-	changes, err := ComputeSampleChanges(map[string]schema.Element{},
+	changes, err := ComputeSampleChanges(emptySchema,
 		[]metadata.SavedSample{},
 		[]metadata.Sample{newSample1, newSample2})
 	require.NoError(t, err)
@@ -83,7 +83,7 @@ func sampleModelDoesNotExist(t *testing.T) {
 }
 
 func sampleModelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	newSample1 := metadatatest.NewSampleBuilder().Build()
 	newSample2 := metadatatest.NewSampleBuilder().Build()
@@ -94,7 +94,8 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.SampleModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -133,7 +134,7 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noSampleChanges(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	sample1 := metadatatest.NewSampleBuilder().Build()
 	sample2 := metadatatest.NewSampleBuilder().Build()
@@ -151,7 +152,7 @@ func noSampleChanges(t *testing.T) {
 }
 
 func sampleOrderDoesNotMatter(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	sample1 := metadatatest.NewSampleBuilder().Build()
 	sample2 := metadatatest.NewSampleBuilder().Build()
@@ -169,7 +170,7 @@ func sampleOrderDoesNotMatter(t *testing.T) {
 }
 
 func deleteSample(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	keptSample1 := metadatatest.NewSampleBuilder().Build()
 	deletedSample := metadatatest.NewSampleBuilder().Build()
@@ -184,7 +185,9 @@ func deleteSample(t *testing.T) {
 		[]metadata.Sample{keptSample2, keptSample1})
 	require.NoError(t, err)
 	require.NotNil(t, changes)
-	assert.Equal(t, schemaData[metadata.SampleModelName].ID, changes.ID)
+
+	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)

@@ -50,7 +50,7 @@ func (p *CurationExportSyncProcessor) Run() error {
 		return err
 	}
 	logger.Info("Computing required changes")
-	changes, err := sync.ComputeChangeset(p.MetadataReader.ModelNamesToSchemaElements, oldMetadata, newMetadata)
+	changes, err := sync.ComputeChangeset(p.MetadataReader.Schema, oldMetadata, newMetadata)
 	if err != nil {
 		return err
 	}

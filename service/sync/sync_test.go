@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/stretchr/testify/assert"
@@ -21,7 +21,7 @@ func TestComputeChangeset(t *testing.T) {
 }
 
 func emptyChangesets(t *testing.T) {
-	changes, err := ComputeChangeset(map[string]schema.Element{}, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{})
+	changes, err := ComputeChangeset(emptySchema, &metadata.SavedDatasetMetadata{}, &metadata.DatasetMetadata{})
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 	assert.Empty(t, changes.Models)
@@ -29,10 +29,10 @@ func emptyChangesets(t *testing.T) {
 }
 
 func smokeTest(t *testing.T) {
-	schemaData := newTestSchemaData().
+	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithModel(metadata.SampleModelName, metadata.SampleDisplayName)
+		WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()
 	subject := metadatatest.NewSubjectBuilder().Build()

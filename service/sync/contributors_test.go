@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -27,7 +27,7 @@ func TestComputeContributorsChanges(t *testing.T) {
 }
 
 func everythingEmpty(t *testing.T) {
-	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, []metadata.Contributor{}, []metadata.Contributor{})
+	changes, err := ComputeContributorsChanges(emptySchema, []metadata.Contributor{}, []metadata.Contributor{})
 	require.NoError(t, err)
 	// Nil changes means no updates required.
 	require.Nil(t, changes)
@@ -35,7 +35,7 @@ func everythingEmpty(t *testing.T) {
 
 func modelDoesNotExist(t *testing.T) {
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
-	changes, err := ComputeContributorsChanges(map[string]schema.Element{}, []metadata.Contributor{}, []metadata.Contributor{newContrib})
+	changes, err := ComputeContributorsChanges(emptySchema, []metadata.Contributor{}, []metadata.Contributor{newContrib})
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
@@ -68,7 +68,7 @@ func modelDoesNotExist(t *testing.T) {
 }
 
 func modelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	newContrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
 
@@ -76,7 +76,8 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -124,7 +125,7 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noChanges(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -139,7 +140,7 @@ func noChanges(t *testing.T) {
 }
 
 func orderChange(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -152,7 +153,8 @@ func orderChange(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -199,7 +201,7 @@ func orderChange(t *testing.T) {
 }
 
 func removeContributor(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -213,7 +215,8 @@ func removeContributor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -260,7 +263,7 @@ func removeContributor(t *testing.T) {
 }
 
 func addContributor(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -273,7 +276,8 @@ func addContributor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.ContributorModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)

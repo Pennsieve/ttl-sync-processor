@@ -25,7 +25,7 @@ func ToSample(record instance.Record) (metadata.SavedSample, error) {
 func NewSampleStoreMapping(samples []metadata.SavedSample, subjects []metadata.SavedSubject) mappings.Mapping[instance.LinkedProperty, metadata.SavedSampleSubjectInstance] {
 	store := NewSampleSubjectStore(samples, subjects)
 	return func(linkedProperty instance.LinkedProperty) (metadata.SavedSampleSubjectInstance, error) {
-		savedSampleSubject := metadata.SavedSampleSubjectInstance{PennsieveID: changesetmodels.PennsieveInstanceID(linkedProperty.Id)}
+		savedSampleSubject := metadata.SavedSampleSubjectInstance{PennsieveID: changesetmodels.PennsieveInstanceID(linkedProperty.ID)}
 		if err := checkLinkedPropertyName(linkedProperty, metadata.SampleSubjectLinkName); err != nil {
 			return metadata.SavedSampleSubjectInstance{}, err
 		}

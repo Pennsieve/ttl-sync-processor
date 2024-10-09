@@ -2,7 +2,7 @@ package sync
 
 import (
 	"github.com/google/uuid"
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -28,7 +28,7 @@ func TestComputeSubjectChanges(t *testing.T) {
 }
 
 func emptyChangesetSubject(t *testing.T) {
-	changes, err := ComputeSubjectChanges(map[string]schema.Element{}, []metadata.SavedSubject{}, []metadata.Subject{})
+	changes, err := ComputeSubjectChanges(emptySchema, []metadata.SavedSubject{}, []metadata.Subject{})
 	require.NoError(t, err)
 	// Nil changes means no updates required.
 	require.Nil(t, changes)
@@ -37,7 +37,7 @@ func emptyChangesetSubject(t *testing.T) {
 func subjectModelDoesNotExist(t *testing.T) {
 	newSubject := metadatatest.NewSubjectBuilder().Build()
 	newSubject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
-	changes, err := ComputeSubjectChanges(map[string]schema.Element{},
+	changes, err := ComputeSubjectChanges(emptySchema,
 		[]metadata.SavedSubject{},
 		[]metadata.Subject{newSubject, newSubject2})
 	require.NoError(t, err)
@@ -94,7 +94,7 @@ func subjectModelDoesNotExist(t *testing.T) {
 }
 
 func subjectModelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
 
 	newSubject := metadatatest.NewSubjectBuilder().Build()
 	newSubject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
@@ -105,7 +105,8 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.SubjectModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -153,7 +154,7 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noSubjectChanges(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()
@@ -171,7 +172,7 @@ func noSubjectChanges(t *testing.T) {
 }
 
 func subjectOrderDoesNotMatter(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()
@@ -189,7 +190,7 @@ func subjectOrderDoesNotMatter(t *testing.T) {
 }
 
 func updateSubject(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
 
 	originalSubject := metadatatest.NewSubjectBuilder().Build()
 	originalSubject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
@@ -211,7 +212,8 @@ func updateSubject(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.SubjectModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
@@ -260,7 +262,7 @@ func updateSubject(t *testing.T) {
 }
 
 func deleteSubject(t *testing.T) {
-	schemaData := newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName)
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
 
 	keptSubject1 := metadatatest.NewSubjectBuilder().Build()
 	deletedSubject := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
@@ -276,7 +278,8 @@ func deleteSubject(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Equal(t, schemaData[metadata.SubjectModelName].ID, changes.ID)
+	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)

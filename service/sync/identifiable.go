@@ -1,7 +1,7 @@
 package sync
 
 import (
-	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
+	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/pennsieve/ttl-sync-processor/service/spec"
@@ -9,7 +9,7 @@ import (
 )
 
 func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](
-	schemaData map[string]schema.Element,
+	schemaData *metadataclient.Schema,
 	old []OLD,
 	new []NEW,
 	instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
@@ -79,4 +79,49 @@ func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](old 
 	}
 
 	return &changesetmodels.ModelChanges{Records: recordChanges}, nil
+}
+
+func addIdentifiablePropertyLinkChanges[OLD metadata.SavedIDer, NEW metadata.IDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.LinkedPropertyChanges, error) {
+	instanceChanges := changesetmodels.InstanceChanges{}
+
+	oldByID := map[string]OLD{}
+	oldToDelete := map[string]OLD{}
+	for _, oldInstance := range old {
+		oldByID[oldInstance.GetID()] = oldInstance
+		oldToDelete[oldInstance.GetID()] = oldInstance
+	}
+
+	for _, newInstance := range new {
+		newID := newInstance.GetID()
+		if _, found := oldToDelete[newID]; found {
+			delete(oldToDelete, newID)
+		}
+		if _, exists := oldByID[newID]; !exists {
+			instanceChanges.Creates = append(instanceChanges.Creates, changesetmodels.InstanceLinkedPropertyCreate{
+				FromRecordID: "",
+				InstanceLinkedPropertyCreatePayload: changesetmodels.InstanceLinkedPropertyCreatePayload{
+					Name:                   "",
+					DisplayName:            "",
+					SchemaLinkedPropertyID: "",
+					ToRecordID:             "",
+				},
+			})
+		}
+	}
+
+	if len(oldToDelete) > 0 {
+		for _, toDelete := range oldToDelete {
+			instanceChanges.Deletes = append(instanceChanges.Deletes, changesetmodels.InstanceLinkedPropertyDelete{
+				FromRecordID:             "",
+				InstanceLinkedPropertyID: toDelete.GetPennsieveID(),
+			})
+		}
+	}
+
+	if len(instanceChanges.Creates) == 0 && len(instanceChanges.Deletes) == 0 {
+		return nil, nil
+	}
+	return &changesetmodels.LinkedPropertyChanges{
+		Instances: instanceChanges,
+	}, nil
 }
