@@ -8,6 +8,10 @@ import (
 // PennsieveInstanceID is the internal ID of the record in Pennsieve. Not usually seen by user, but needed for API calls
 type PennsieveInstanceID string
 
+// ExternalInstanceID is an ID that the user supplies, or we can calculate from the values a user supplies. It identifies
+// an instance, so that two instances with the same ID should be considered the same.
+type ExternalInstanceID string
+
 type ModelChanges struct {
 	// The ID of the model. Can be empty or missing if the model does not exist.
 	// In this case, Create below should be non-nil

@@ -30,6 +30,14 @@ func appendStringRecordValue(values []changesetmodels.RecordValue, name string, 
 	}), stillEqual
 }
 
+func appendExternalIDRecordValue(values []changesetmodels.RecordValue, name string, oldValue, newValue changesetmodels.ExternalInstanceID, wasEqual bool) ([]changesetmodels.RecordValue, bool) {
+	stillEqual := wasEqual && oldValue == newValue
+	return append(values, changesetmodels.RecordValue{
+		Value: newValue,
+		Name:  name,
+	}), stillEqual
+}
+
 func appendStringSliceRecordValue(values []changesetmodels.RecordValue, name string, oldValue, newValue []string, wasEqual bool) ([]changesetmodels.RecordValue, bool) {
 	stillEqual := wasEqual && slices.Equal(oldValue, newValue)
 	return append(values, changesetmodels.RecordValue{

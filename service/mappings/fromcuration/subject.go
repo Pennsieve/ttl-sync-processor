@@ -1,6 +1,7 @@
 package fromcuration
 
 import (
+	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/curation"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
@@ -26,7 +27,7 @@ func ToSubject(exportedSubject curation.Subject) (metadata.Subject, error) {
 		speciesName = "unknown"
 	}
 	subject := metadata.Subject{
-		ID:              exportedSubject.ID,
+		ID:              changesetmodels.ExternalInstanceID(exportedSubject.ID),
 		Species:         speciesName,
 		SpeciesSynonyms: synonyms,
 	}

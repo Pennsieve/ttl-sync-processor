@@ -3,6 +3,7 @@ package fromrecord
 import (
 	"fmt"
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
+	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 )
 
@@ -29,6 +30,13 @@ func safeStringSlice(value any) []string {
 		strSlice[i] = anySlice[i].(string)
 	}
 	return strSlice
+}
+
+func safeExternalID(value any) changesetmodels.ExternalInstanceID {
+	if value == nil {
+		return changesetmodels.ExternalInstanceID("")
+	}
+	return changesetmodels.ExternalInstanceID(value.(string))
 }
 
 func checkRecordType(record instance.Record, expectedModelName string) error {

@@ -22,14 +22,14 @@ var Sample = Model{
 var SampleInstance = IdentifiableInstance[metadata.SavedSample, metadata.Sample]{
 	Creator: func(new metadata.Sample) changesetmodels.RecordCreate {
 		var values []changesetmodels.RecordValue
-		values = appendNonEmptyRecordValue(values, metadata.SampleIDKey, new.GetID())
+		values = appendNonEmptyRecordValue(values, metadata.SampleIDKey, new.ExternalID())
 		return changesetmodels.RecordCreate{Values: values}
 	},
 	Updater: func(old metadata.SavedSample, new metadata.Sample) (*changesetmodels.RecordUpdate, error) {
-		if old.GetID() != new.GetID() {
+		if old.ExternalID() != new.ExternalID() {
 			return nil, fmt.Errorf("old sample %s and new sample %s do not represent the same sample",
-				old.GetID(),
-				new.GetID())
+				old.ExternalID(),
+				new.ExternalID())
 		}
 		// No updates, since this model does not have any non-ID properties at the moment. See subject for an example
 		// of how this works with non-ID properties

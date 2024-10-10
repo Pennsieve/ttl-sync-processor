@@ -14,7 +14,7 @@ func ToSubject(record instance.Record) (metadata.SavedSubject, error) {
 	for _, v := range record.Values {
 		switch v.Name {
 		case metadata.SubjectIDKey:
-			subject.ID = safeString(v.Value)
+			subject.ID = safeExternalID(v.Value)
 		case metadata.SpeciesKey:
 			subject.Species = safeString(v.Value)
 		case metadata.SpeciesSynonymsKey:

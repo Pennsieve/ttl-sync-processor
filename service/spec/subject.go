@@ -32,16 +32,16 @@ var SubjectInstance = IdentifiableInstance[metadata.SavedSubject, metadata.Subje
 	},
 	Updater: func(oldSubject metadata.SavedSubject, newSubject metadata.Subject) (*changesetmodels.RecordUpdate, error) {
 		// since we are identifying old and new based on GetID(), it doesn't make sense to update the ID
-		if oldSubject.GetID() != newSubject.GetID() {
+		if oldSubject.ExternalID() != newSubject.ExternalID() {
 			return nil, fmt.Errorf("old subject %s and new subject %s do not represent the same subject",
-				oldSubject.GetID(),
-				newSubject.GetID())
+				oldSubject.ExternalID(),
+				newSubject.ExternalID())
 		}
 		var values []changesetmodels.RecordValue
 		noChange := true
 		// The ID cannot be updated, but if there are other changes, we need to include all properties, even those
 		// not changed
-		values, noChange = appendStringRecordValue(values, metadata.SubjectIDKey, oldSubject.ID, newSubject.ID, noChange)
+		values, noChange = appendExternalIDRecordValue(values, metadata.SubjectIDKey, oldSubject.ID, newSubject.ID, noChange)
 		values, noChange = appendStringRecordValue(values, metadata.SpeciesKey, oldSubject.Species, newSubject.Species, noChange)
 		values, noChange = appendStringSliceRecordValue(values, metadata.SpeciesSynonymsKey, oldSubject.SpeciesSynonyms, newSubject.SpeciesSynonyms, noChange)
 

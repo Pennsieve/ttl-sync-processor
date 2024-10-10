@@ -12,7 +12,7 @@ type SubjectBuilder struct {
 }
 
 func NewSubjectBuilder() *SubjectBuilder {
-	return &SubjectBuilder{s: &metadata.Subject{ID: uuid.NewString(), Species: uuid.NewString()}}
+	return &SubjectBuilder{s: &metadata.Subject{ID: NewExternalInstanceID(), Species: uuid.NewString()}}
 }
 
 func (b *SubjectBuilder) WithSpeciesSynonyms(count int) *SubjectBuilder {

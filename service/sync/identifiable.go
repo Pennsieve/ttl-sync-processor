@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](
+func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](
 	schemaData *metadataclient.Schema,
 	old []OLD,
 	new []NEW,
@@ -36,18 +36,18 @@ func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](
 	)
 	return modelChanges, nil
 }
-func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
+func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
 	recordChanges := changesetmodels.RecordChanges{}
 
-	oldByID := map[string]OLD{}
-	oldToDelete := map[string]OLD{}
+	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
+	oldToDelete := map[changesetmodels.ExternalInstanceID]OLD{}
 	for _, oldInstance := range old {
-		oldByID[oldInstance.GetID()] = oldInstance
-		oldToDelete[oldInstance.GetID()] = oldInstance
+		oldByID[oldInstance.ExternalID()] = oldInstance
+		oldToDelete[oldInstance.ExternalID()] = oldInstance
 	}
 
 	for _, newInstance := range new {
-		newID := newInstance.GetID()
+		newID := newInstance.ExternalID()
 		if _, found := oldToDelete[newID]; found {
 			delete(oldToDelete, newID)
 		}
@@ -81,18 +81,18 @@ func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.IDer](old 
 	return &changesetmodels.ModelChanges{Records: recordChanges}, nil
 }
 
-func addIdentifiablePropertyLinkChanges[OLD metadata.SavedIDer, NEW metadata.IDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.LinkedPropertyChanges, error) {
+func addIdentifiablePropertyLinkChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error) {
 	instanceChanges := changesetmodels.InstanceChanges{}
 
-	oldByID := map[string]OLD{}
-	oldToDelete := map[string]OLD{}
+	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
+	oldToDelete := map[changesetmodels.ExternalInstanceID]OLD{}
 	for _, oldInstance := range old {
-		oldByID[oldInstance.GetID()] = oldInstance
-		oldToDelete[oldInstance.GetID()] = oldInstance
+		oldByID[oldInstance.ExternalID()] = oldInstance
+		oldToDelete[oldInstance.ExternalID()] = oldInstance
 	}
 
 	for _, newInstance := range new {
-		newID := newInstance.GetID()
+		newID := newInstance.ExternalID()
 		if _, found := oldToDelete[newID]; found {
 			delete(oldToDelete, newID)
 		}

@@ -1,8 +1,6 @@
 package metadatatest
 
 import (
-	"github.com/google/uuid"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
@@ -11,7 +9,7 @@ type SampleBuilder struct {
 }
 
 func NewSampleBuilder() *SampleBuilder {
-	return &SampleBuilder{s: &metadata.Sample{ID: uuid.NewString()}}
+	return &SampleBuilder{s: &metadata.Sample{ID: NewExternalInstanceID()}}
 }
 
 func (b *SampleBuilder) Build() metadata.Sample {
@@ -20,7 +18,7 @@ func (b *SampleBuilder) Build() metadata.Sample {
 
 func NewSavedSample(sample metadata.Sample) metadata.SavedSample {
 	return metadata.SavedSample{
-		PennsieveID: changesetmodels.PennsieveInstanceID(uuid.NewString()),
+		PennsieveID: NewPennsieveInstanceID(),
 		Sample:      sample,
 	}
 }

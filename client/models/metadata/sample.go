@@ -13,23 +13,23 @@ const SampleDisplayName = "Sample"
 const SampleIDKey = "id"
 
 type Sample struct {
-	ID string `json:"id"`
+	ID changesetmodels.ExternalInstanceID `json:"id"`
 }
 
-func (s Sample) GetID() string {
-	return s.ID
+func (s Sample) ExternalID() changesetmodels.ExternalInstanceID {
+	return changesetmodels.ExternalInstanceID(s.ID)
 }
 
 const SampleSubjectLinkName = SubjectModelName
 const SampleSubjectLinkDisplayName = SubjectDisplayName
 
 type SampleSubject struct {
-	SampleID  string
-	SubjectID string
+	SampleID  changesetmodels.ExternalInstanceID
+	SubjectID changesetmodels.ExternalInstanceID
 }
 
-func (l SampleSubject) GetID() string {
-	return fmt.Sprintf("%s:%s", l.SampleID, l.SubjectID)
+func (l SampleSubject) ExternalID() changesetmodels.ExternalInstanceID {
+	return changesetmodels.ExternalInstanceID(fmt.Sprintf("%s:%s", l.SampleID, l.SubjectID))
 }
 
 type SavedSample struct {

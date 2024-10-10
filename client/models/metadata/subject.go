@@ -12,13 +12,13 @@ const SpeciesKey = "species"
 const SpeciesSynonymsKey = "species_synonyms"
 
 type Subject struct {
-	ID              string   `json:"id"`
-	Species         string   `json:"species"`
-	SpeciesSynonyms []string `json:"species_synonyms,omitempty"`
+	ID              changesetmodels.ExternalInstanceID `json:"id"`
+	Species         string                             `json:"species"`
+	SpeciesSynonyms []string                           `json:"species_synonyms,omitempty"`
 }
 
-func (s Subject) GetID() string {
-	return s.ID
+func (s Subject) ExternalID() changesetmodels.ExternalInstanceID {
+	return changesetmodels.ExternalInstanceID(s.ID)
 }
 
 type SavedSubject struct {

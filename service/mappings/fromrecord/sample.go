@@ -16,7 +16,7 @@ func ToSample(record instance.Record) (metadata.SavedSample, error) {
 	for _, v := range record.Values {
 		switch v.Name {
 		case metadata.SampleIDKey:
-			sample.ID = safeString(v.Value)
+			sample.ID = safeExternalID(v.Value)
 		}
 	}
 	return sample, nil
@@ -65,13 +65,13 @@ func (store *SampleSubjectStore) GetSampleSubject(sampleInstanceID, subjectInsta
 	if sample, sampleFound := store.samplesByPennsieveID[sampleInstanceID]; !sampleFound {
 		return metadata.SampleSubject{}, fmt.Errorf("no sample with Pennsieve ID %s", sampleInstanceID)
 	} else {
-		sampleSubject.SampleID = sample.GetID()
+		sampleSubject.SampleID = sample.ExternalID()
 	}
 	if subject, subjectFound := store.subjectsByPennsieveID[subjectInstanceID]; !subjectFound {
 		return metadata.SampleSubject{}, fmt.Errorf("no subject with Pennsieve ID %s", subjectInstanceID)
 
 	} else {
-		sampleSubject.SubjectID = subject.GetID()
+		sampleSubject.SubjectID = subject.ExternalID()
 	}
 	return sampleSubject, nil
 }

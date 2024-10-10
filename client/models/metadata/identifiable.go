@@ -6,11 +6,11 @@ type Saved interface {
 	GetPennsieveID() changesetmodels.PennsieveInstanceID
 }
 
-type IDer interface {
-	GetID() string
+type ExternalIDer interface {
+	ExternalID() changesetmodels.ExternalInstanceID
 }
 
 type SavedIDer interface {
 	Saved
-	IDer
+	ExternalIDer
 }
