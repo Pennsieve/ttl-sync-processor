@@ -64,6 +64,16 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	assert.Len(t, sampleChanges.Records.Delete, 1)
 	assert.Empty(t, sampleChanges.Records.Update)
 	assert.Len(t, sampleChanges.Records.Create, 2)
+
+	// Links
+	assert.Len(t, changeset.LinkedProperties, 1)
+	// SampleSubjects
+	sampleSubjectChanges := changeset.LinkedProperties[0]
+	assert.NotEmpty(t, sampleSubjectChanges.ID)
+	assert.Nil(t, sampleSubjectChanges.Create)
+
+	assert.Len(t, sampleSubjectChanges.Instances.Create, 2)
+	assert.Len(t, sampleSubjectChanges.Instances.Delete, 1)
 }
 
 func TestCurationExportSyncProcessor_ReadExistingPennsieveMetadata(t *testing.T) {
