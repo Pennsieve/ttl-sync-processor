@@ -10,10 +10,3 @@ import (
 func ToSample(exportedSample curation.Sample) (metadata.Sample, error) {
 	return metadata.Sample{ID: changesetmodels.ExternalInstanceID(exportedSample.ID)}, nil
 }
-
-func ToSampleSubjectLink(exportedSample curation.Sample) (metadata.SampleSubject, error) {
-	return metadata.SampleSubject{
-		SampleID:  changesetmodels.ExternalInstanceID(exportedSample.ID),
-		SubjectID: changesetmodels.ExternalInstanceID(exportedSample.SubjectID),
-	}, nil
-}

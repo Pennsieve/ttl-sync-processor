@@ -173,11 +173,10 @@ func deleteSample(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
 
 	keptSample1 := metadatatest.NewSampleBuilder().Build()
-	deletedSample := metadatatest.NewSampleBuilder().Build()
 	keptSample2 := metadatatest.NewSampleBuilder().Build()
 
 	keptSample1Saved := metadatatest.NewSavedSample(keptSample1)
-	deletedSampleSaved := metadatatest.NewSavedSample(deletedSample)
+	deletedSampleSaved := metadatatest.NewSavedSample(metadatatest.NewSampleBuilder().Build())
 	keptSample2Saved := metadatatest.NewSavedSample(keptSample2)
 
 	changes, err := ComputeSampleChanges(schemaData,

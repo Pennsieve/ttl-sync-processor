@@ -32,18 +32,25 @@ func smokeTest(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
+		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+	)
 
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()
 	subject := metadatatest.NewSubjectBuilder().Build()
 	sample := metadatatest.NewSampleBuilder().Build()
+	sampleSubject := metadata.SampleSubject{
+		SampleID:  sample.ExternalID(),
+		SubjectID: subject.ExternalID(),
+	}
 
 	changes, err := ComputeChangeset(schemaData,
 		&metadata.SavedDatasetMetadata{},
 		&metadata.DatasetMetadata{
-			Contributors: []metadata.Contributor{contributor},
-			Subjects:     []metadata.Subject{subject},
-			Samples:      []metadata.Sample{sample},
+			Contributors:   []metadata.Contributor{contributor},
+			Subjects:       []metadata.Subject{subject},
+			Samples:        []metadata.Sample{sample},
+			SampleSubjects: []metadata.SampleSubject{sampleSubject},
 		},
 	)
 	require.NoError(t, err)
@@ -53,4 +60,9 @@ func smokeTest(t *testing.T) {
 		require.NotNil(t, m.ID)
 		assert.Len(t, m.Records.Create, 1)
 	}
+
+	assert.Len(t, changes.LinkedProperties, 1)
+	sampleSubjectChanges := changes.LinkedProperties[0]
+	assert.NotNil(t, sampleSubjectChanges.ID)
+	assert.Len(t, sampleSubjectChanges.Instances.Create, 1)
 }

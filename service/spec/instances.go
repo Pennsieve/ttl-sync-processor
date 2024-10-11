@@ -10,7 +10,7 @@ type Instance[OLD, NEW any] struct {
 	Updater func(old OLD, new NEW) (*changesetmodels.RecordUpdate, error)
 }
 
-type IdentifiableInstance[OLD metadata.SavedIDer, NEW metadata.ExternalIDer] struct {
+type IdentifiableInstance[OLD metadata.SavedExternalIDer, NEW metadata.ExternalIDer] struct {
 	Creator func(new NEW) changesetmodels.RecordCreate
 	Updater func(old OLD, new NEW) (*changesetmodels.RecordUpdate, error)
 	Model   Model

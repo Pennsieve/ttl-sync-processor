@@ -46,5 +46,5 @@ type SavedDatasetMetadata struct {
 	Contributors   []Contributor
 	Subjects       []SavedSubject
 	Samples        []SavedSample
-	SampleSubjects []SavedSampleSubjectInstance
+	SampleSubjects []SavedSampleSubject
 }

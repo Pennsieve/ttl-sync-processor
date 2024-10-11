@@ -8,7 +8,7 @@ import (
 	"log/slog"
 )
 
-func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](
+func ComputeIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.ExternalIDer](
 	schemaData *metadataclient.Schema,
 	old []OLD,
 	new []NEW,
@@ -36,7 +36,7 @@ func ComputeIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.Extern
 	)
 	return modelChanges, nil
 }
-func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
+func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
 	recordChanges := changesetmodels.RecordChanges{}
 
 	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
@@ -81,47 +81,25 @@ func addIdentifiableModelChanges[OLD metadata.SavedIDer, NEW metadata.ExternalID
 	return &changesetmodels.ModelChanges{Records: recordChanges}, nil
 }
 
-func addIdentifiablePropertyLinkChanges[OLD metadata.SavedIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error) {
-	instanceChanges := changesetmodels.InstanceChanges{}
-
-	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
-	oldToDelete := map[changesetmodels.ExternalInstanceID]OLD{}
-	for _, oldInstance := range old {
-		oldByID[oldInstance.ExternalID()] = oldInstance
-		oldToDelete[oldInstance.ExternalID()] = oldInstance
-	}
-
-	for _, newInstance := range new {
-		newID := newInstance.ExternalID()
-		if _, found := oldToDelete[newID]; found {
-			delete(oldToDelete, newID)
+func setModelIDOrCreate(modelChanges *changesetmodels.ModelChanges, schemaData *metadataclient.Schema, modelSpec spec.Model) error {
+	if model, modelExists := schemaData.ModelByName(modelSpec.Name); modelExists {
+		logger.Info("model exists", slog.String("modelName", modelSpec.Name), slog.String("modelID", model.ID))
+		modelChanges.ID = model.ID
+	} else {
+		logger.Info("model must be created", slog.String("modelName", modelSpec.Name))
+		propsCreate, err := modelSpec.PropertyCreator()
+		if err != nil {
+			return err
 		}
-		if _, exists := oldByID[newID]; !exists {
-			instanceChanges.Creates = append(instanceChanges.Creates, changesetmodels.InstanceLinkedPropertyCreate{
-				FromRecordID: "",
-				InstanceLinkedPropertyCreatePayload: changesetmodels.InstanceLinkedPropertyCreatePayload{
-					Name:                   "",
-					DisplayName:            "",
-					SchemaLinkedPropertyID: "",
-					ToRecordID:             "",
-				},
-			})
+		modelChanges.Create = &changesetmodels.ModelPropsCreate{
+			Model: changesetmodels.ModelCreate{
+				Name:        modelSpec.Name,
+				DisplayName: modelSpec.DisplayName,
+				Description: modelSpec.Description,
+				Locked:      false,
+			},
+			Properties: propsCreate,
 		}
 	}
-
-	if len(oldToDelete) > 0 {
-		for _, toDelete := range oldToDelete {
-			instanceChanges.Deletes = append(instanceChanges.Deletes, changesetmodels.InstanceLinkedPropertyDelete{
-				FromRecordID:             "",
-				InstanceLinkedPropertyID: toDelete.GetPennsieveID(),
-			})
-		}
-	}
-
-	if len(instanceChanges.Creates) == 0 && len(instanceChanges.Deletes) == 0 {
-		return nil, nil
-	}
-	return &changesetmodels.LinkedPropertyChanges{
-		Instances: instanceChanges,
-	}, nil
+	return nil
 }

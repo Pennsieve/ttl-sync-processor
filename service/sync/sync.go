@@ -25,10 +25,10 @@ func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedData
 	if err := appendModelChanges(datasetChanges, schemaData, old.Samples, new.Samples, ComputeSampleChanges); err != nil {
 		return nil, err
 	}
-	// TODO figure this out
-	/*if err := appendLinkedPropertyChanges(datasetChanges, schemaData, old.SampleSubjects, new.SampleSubjects, nil); err != nil {
+
+	if err := appendLinkedPropertyChanges(datasetChanges, schemaData, old.SampleSubjects, new.SampleSubjects, ComputeSampleSubjectChanges); err != nil {
 		return nil, err
-	}*/
+	}
 	return datasetChanges, nil
 }
 
@@ -49,9 +49,9 @@ func appendModelChanges[OLD, NEW any](datasetChanges *changesetmodels.Dataset, s
 	return nil
 }
 
-type linkedPropertyChangeComputer[OLD, NEW any] func(schemaData *metadataclient.Schema, old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error)
+type linkedPropertyChangeComputer[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink] func(schemaData *metadataclient.Schema, old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error)
 
-func appendLinkedPropertyChanges[OLD, NEW any](datasetChanges *changesetmodels.Dataset, schemaData *metadataclient.Schema, old []OLD, new []NEW, computer linkedPropertyChangeComputer[OLD, NEW]) error {
+func appendLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](datasetChanges *changesetmodels.Dataset, schemaData *metadataclient.Schema, old []OLD, new []NEW, computer linkedPropertyChangeComputer[OLD, NEW]) error {
 	linkedPropertyChanges, err := computer(schemaData, old, new)
 	if err != nil {
 		return err

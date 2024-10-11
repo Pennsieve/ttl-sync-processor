@@ -10,7 +10,7 @@ type ExternalIDer interface {
 	ExternalID() changesetmodels.ExternalInstanceID
 }
 
-type SavedIDer interface {
+type SavedExternalIDer interface {
 	Saved
 	ExternalIDer
 }
