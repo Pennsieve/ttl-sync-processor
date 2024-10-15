@@ -15,6 +15,8 @@ func ToSample(record instance.Record) (metadata.SavedSample, error) {
 		switch v.Name {
 		case metadata.SampleIDKey:
 			sample.ID = safeExternalID(v.Value)
+		case metadata.PrimaryKeyKey:
+			sample.PrimaryKey = safeString(v.Value)
 		}
 	}
 	return sample, nil

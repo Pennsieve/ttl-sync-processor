@@ -62,7 +62,7 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	assert.Nil(t, sampleChanges.Create)
 	assert.False(t, sampleChanges.Records.DeleteAll)
 	assert.Len(t, sampleChanges.Records.Delete, 1)
-	assert.Empty(t, sampleChanges.Records.Update)
+	assert.Len(t, sampleChanges.Records.Update, 1)
 	assert.Len(t, sampleChanges.Records.Create, 2)
 
 	// Links

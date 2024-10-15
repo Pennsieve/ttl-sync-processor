@@ -33,7 +33,7 @@ func smokeTest(t *testing.T) {
 		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()

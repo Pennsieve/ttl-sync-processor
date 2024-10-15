@@ -33,7 +33,7 @@ func NewSavedSubject(subject metadata.Subject) metadata.SavedSubject {
 	}
 }
 
-// Copy returns a deep copy.
+// SubjectCopy returns a deep copy.
 func SubjectCopy(original metadata.Subject) metadata.Subject {
 	// make use of pass by value. original is already a copy of the actual
 	// original. But we need to clone the slice since that will still refer to

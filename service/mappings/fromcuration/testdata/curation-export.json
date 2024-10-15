@@ -243,5 +243,24 @@
       "uv_laser_marked": "9a2a36c5-5e47-4a14-8bed-abe971084097/030.jpeg",
       "was_derived_from": "3513ebfd-101a-4124-b174-254b594feb35"
     }
-  ]
+  ],
+  "specimen_dirs": {
+    "records": [
+      {
+        "dirs": [
+          "first/sub-f1027e6e"
+        ],
+        "specimen_id": "f1027e6e-17cf-45d7-8b57-4c91bfd93fce",
+        "type": "SubjectDirs"
+      },
+      {
+        "dirs": [
+          "first/subject-x/samples/sample-f61ed5a9-1",
+          "first/subject-x/samples/sample-f61ed5a9-2"
+        ],
+        "specimen_id": "f61ed5a9-5a69-49f7-9113-6447ee9e668b",
+        "type": "SampleDirs"
+      }
+    ]
+  }
 }

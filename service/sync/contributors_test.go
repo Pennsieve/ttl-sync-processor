@@ -68,7 +68,7 @@ func modelDoesNotExist(t *testing.T) {
 }
 
 func modelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).Build())
 	newContrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	newContrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
 
@@ -125,7 +125,7 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noChanges(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).Build())
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -140,7 +140,7 @@ func noChanges(t *testing.T) {
 }
 
 func orderChange(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).Build())
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -201,7 +201,7 @@ func orderChange(t *testing.T) {
 }
 
 func removeContributor(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).Build())
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -263,7 +263,7 @@ func removeContributor(t *testing.T) {
 }
 
 func addContributor(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).Build())
 
 	contrib := metadatatest.NewContributorBuilder().WithMiddleInitial().Build()
 	contrib2 := metadatatest.NewContributorBuilder().WithNodeID().Build()

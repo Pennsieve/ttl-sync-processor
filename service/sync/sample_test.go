@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"github.com/google/uuid"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
@@ -18,6 +19,7 @@ func TestComputeSampleChanges(t *testing.T) {
 		"no changes":                            noSampleChanges,
 		"order does not matter":                 sampleOrderDoesNotMatter,
 		"deleted sample":                        deleteSample,
+		"update sample":                         updateSample,
 	} {
 		t.Run(scenario, func(t *testing.T) {
 			test(t)
@@ -44,7 +46,7 @@ func sampleModelDoesNotExist(t *testing.T) {
 	assert.Empty(t, changes.ID)
 	assert.NotNil(t, changes.Create)
 	assert.Equal(t, metadata.SampleModelName, changes.Create.Model.Name)
-	assert.Len(t, changes.Create.Properties, 1)
+	assert.Len(t, changes.Create.Properties, 2)
 
 	assert.NotNil(t, changes.Records)
 	assert.False(t, changes.Records.DeleteAll)
@@ -56,7 +58,7 @@ func sampleModelDoesNotExist(t *testing.T) {
 	{
 		values := changes.Records.Create[0].Values
 		// Only contains ID since that is the only property
-		assert.Len(t, values, 1)
+		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
 		for _, v := range values {
 			valuesByName[v.Name] = v
@@ -64,13 +66,16 @@ func sampleModelDoesNotExist(t *testing.T) {
 		assert.Contains(t, valuesByName, metadata.SampleIDKey)
 		assert.Equal(t, newSample1.ID, valuesByName[metadata.SampleIDKey].Value)
 
+		assert.Contains(t, valuesByName, metadata.PrimaryKeyKey)
+		assert.Equal(t, newSample1.PrimaryKey, valuesByName[metadata.PrimaryKeyKey].Value)
+
 	}
 
 	// The Create for newSample2
 	{
 		values := changes.Records.Create[1].Values
 		// Only contains ID and species because other values are empty
-		assert.Len(t, values, 1)
+		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
 		for _, v := range values {
 			valuesByName[v.Name] = v
@@ -78,12 +83,15 @@ func sampleModelDoesNotExist(t *testing.T) {
 		assert.Contains(t, valuesByName, metadata.SampleIDKey)
 		assert.Equal(t, newSample2.ID, valuesByName[metadata.SampleIDKey].Value)
 
+		assert.Contains(t, valuesByName, metadata.PrimaryKeyKey)
+		assert.Equal(t, newSample2.PrimaryKey, valuesByName[metadata.PrimaryKeyKey].Value)
+
 	}
 
 }
 
 func sampleModelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName).Build())
 
 	newSample1 := metadatatest.NewSampleBuilder().Build()
 	newSample2 := metadatatest.NewSampleBuilder().Build()
@@ -108,7 +116,7 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 	{
 		values := changes.Records.Create[0].Values
 		// Only contains ID
-		assert.Len(t, values, 1)
+		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
 		for _, v := range values {
 			valuesByName[v.Name] = v
@@ -116,13 +124,16 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 		assert.Contains(t, valuesByName, metadata.SampleIDKey)
 		assert.Equal(t, newSample1.ID, valuesByName[metadata.SampleIDKey].Value)
 
+		assert.Contains(t, valuesByName, metadata.PrimaryKeyKey)
+		assert.Equal(t, newSample1.PrimaryKey, valuesByName[metadata.PrimaryKeyKey].Value)
+
 	}
 
 	// The Create for newSample2
 	{
 		values := changes.Records.Create[1].Values
 		// Only contains ID
-		assert.Len(t, values, 1)
+		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
 		for _, v := range values {
 			valuesByName[v.Name] = v
@@ -130,11 +141,14 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 		assert.Contains(t, valuesByName, metadata.SampleIDKey)
 		assert.Equal(t, newSample2.ID, valuesByName[metadata.SampleIDKey].Value)
 
+		assert.Contains(t, valuesByName, metadata.PrimaryKeyKey)
+		assert.Equal(t, newSample2.PrimaryKey, valuesByName[metadata.PrimaryKeyKey].Value)
+
 	}
 }
 
 func noSampleChanges(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName).Build())
 
 	sample1 := metadatatest.NewSampleBuilder().Build()
 	sample2 := metadatatest.NewSampleBuilder().Build()
@@ -152,7 +166,7 @@ func noSampleChanges(t *testing.T) {
 }
 
 func sampleOrderDoesNotMatter(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName).Build())
 
 	sample1 := metadatatest.NewSampleBuilder().Build()
 	sample2 := metadatatest.NewSampleBuilder().Build()
@@ -170,7 +184,7 @@ func sampleOrderDoesNotMatter(t *testing.T) {
 }
 
 func deleteSample(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName).Build())
 
 	keptSample1 := metadatatest.NewSampleBuilder().Build()
 	keptSample2 := metadatatest.NewSampleBuilder().Build()
@@ -196,4 +210,67 @@ func deleteSample(t *testing.T) {
 
 	assert.Len(t, changes.Records.Delete, 1)
 	assert.Contains(t, changes.Records.Delete, deletedSampleSaved.PennsieveID)
+}
+
+func updateSample(t *testing.T) {
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SampleModelName, metadata.SampleDisplayName).Build())
+
+	originalSample := metadatatest.NewSampleBuilder().Build()
+	originalSample2 := metadatatest.NewSampleBuilder().Build()
+	unchangedSample := metadatatest.NewSampleBuilder().Build()
+
+	originalSampleSaved := metadatatest.NewSavedSample(originalSample)
+	originalSample2Saved := metadatatest.NewSavedSample(originalSample2)
+	unchangedSampleSaved := metadatatest.NewSavedSample(unchangedSample)
+
+	updatedSample := metadatatest.SampleCopy(originalSample)
+	updatedSample.PrimaryKey = uuid.NewString()
+
+	updatedSample2 := metadatatest.SampleCopy(originalSample2)
+	updatedSample2.PrimaryKey = uuid.NewString()
+
+	changes, err := ComputeSampleChanges(schemaData,
+		[]metadata.SavedSample{originalSampleSaved, originalSample2Saved, unchangedSampleSaved},
+		[]metadata.Sample{unchangedSample, updatedSample2, updatedSample})
+	require.NoError(t, err)
+	require.NotNil(t, changes)
+
+	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
+	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Nil(t, changes.Create)
+
+	assert.NotNil(t, changes.Records)
+	assert.False(t, changes.Records.DeleteAll)
+	assert.Empty(t, changes.Records.Create)
+	assert.Empty(t, changes.Records.Delete)
+
+	assert.Len(t, changes.Records.Update, 2)
+	// The Update for originalSample
+	{
+		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSampleSaved.PennsieveID).Values
+		assert.Len(t, values, 2)
+
+		// ID not updated
+		id := findValueByName(t, values, metadata.SampleIDKey)
+		assert.Equal(t, originalSample.ID, id.Value)
+
+		// PrimaryKey updated
+		species := findValueByName(t, values, metadata.PrimaryKeyKey)
+		assert.Equal(t, updatedSample.PrimaryKey, species.Value)
+
+	}
+
+	// The Update for originalSample2
+	{
+		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSample2Saved.PennsieveID).Values
+		assert.Len(t, values, 2)
+
+		// ID not updated
+		id := findValueByName(t, values, metadata.SampleIDKey)
+		assert.Equal(t, originalSample2.ID, id.Value)
+
+		// PrimaryKey updated
+		synonyms := findValueByName(t, values, metadata.PrimaryKeyKey)
+		assert.Equal(t, updatedSample2.PrimaryKey, synonyms.Value)
+	}
 }

@@ -10,9 +10,11 @@ const SampleDisplayName = "Sample"
 // Keys should match the json struct tag
 
 const SampleIDKey = "id"
+const PrimaryKeyKey = "primary_key"
 
 type Sample struct {
-	ID changesetmodels.ExternalInstanceID `json:"id"`
+	ID         changesetmodels.ExternalInstanceID `json:"id"`
+	PrimaryKey string                             `json:"primary_key"`
 }
 
 func (s Sample) ExternalID() changesetmodels.ExternalInstanceID {

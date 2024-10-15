@@ -16,6 +16,16 @@
         "name": "id",
         "required": true,
         "value": "967af4ee-eca9-4977-a74d-88713b82975f"
+      },
+      {
+        "conceptTitle": false,
+        "dataType": "String",
+        "default": false,
+        "displayName": "PrimaryKey",
+        "locked": false,
+        "name": "primary_key",
+        "required": false,
+        "value": "f61ed5a9-5a69-49f7-9113-6447ee9e668b"
       }
     ]
   },
@@ -36,6 +46,16 @@
         "name": "id",
         "required": true,
         "value": "09d2a327-be38-403a-884d-a4d1d98b732c"
+      },
+      {
+        "conceptTitle": false,
+        "dataType": "String",
+        "default": false,
+        "displayName": "PrimaryKey",
+        "locked": false,
+        "name": "primary_key",
+        "required": false,
+        "value": "rat-sample-pk-1"
       }
     ]
   }

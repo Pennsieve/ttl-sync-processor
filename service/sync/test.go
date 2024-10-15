@@ -19,21 +19,39 @@ func newSchemaElement(elementName, elementDisplayName string, elementType schema
 	}
 }
 
-type testSchemaData []schema.Element
-
-func newTestSchemaData() testSchemaData {
-	return []schema.Element{}
+type testSchemaData struct {
+	elements                []schema.Element
+	proxyRelationshipSchema *schema.NullableRelationship
 }
 
-func (d testSchemaData) WithModel(modelName, displayName string) testSchemaData {
-	return append(d, newSchemaElement(modelName, displayName, schema.ModelType))
+func newTestSchemaData() *testSchemaData {
+	return &testSchemaData{}
 }
 
-func (d testSchemaData) WithLinkedProperty(linkedPropertyName, displayName string) testSchemaData {
-	return append(d, newSchemaElement(linkedPropertyName, displayName, schema.LinkedPropertyType))
+func (d *testSchemaData) WithModel(modelName, displayName string) *testSchemaData {
+	d.elements = append(d.elements, newSchemaElement(modelName, displayName, schema.ModelType))
+	return d
 }
 
-var emptySchema = metadataclient.NewSchema(nil)
+func (d *testSchemaData) WithLinkedProperty(linkedPropertyName, displayName string) *testSchemaData {
+	d.elements = append(d.elements, newSchemaElement(linkedPropertyName, displayName, schema.LinkedPropertyType))
+	return d
+}
+
+func (d *testSchemaData) WithProxyRelationshipSchema() *testSchemaData {
+	d.proxyRelationshipSchema = &schema.NullableRelationship{
+		ID:          uuid.NewString(),
+		Name:        schema.ProxyName,
+		DisplayName: schema.ProxyDisplayName,
+	}
+	return d
+}
+
+func (d *testSchemaData) Build() ([]schema.Element, *schema.NullableRelationship) {
+	return d.elements, d.proxyRelationshipSchema
+}
+
+var emptySchema = metadataclient.NewSchema(nil, nil)
 
 func findValueByName(t *testing.T, values []changesetmodels.RecordValue, name string) changesetmodels.RecordValue {
 	index := slices.IndexFunc(values, func(value changesetmodels.RecordValue) bool {

@@ -26,11 +26,15 @@ func TestToSample(t *testing.T) {
 	metadatatest.AssertExternalInstanceIDEqual(t, "967af4ee-eca9-4977-a74d-88713b82975f", sample1.ID)
 	metadatatest.AssertExternalInstanceIDEqual(t, "967af4ee-eca9-4977-a74d-88713b82975f", sample1.ExternalID())
 
+	assert.Equal(t, "f61ed5a9-5a69-49f7-9113-6447ee9e668b", sample1.PrimaryKey)
+
 	sample2 := samples[1]
 	metadatatest.AssertPennsieveInstanceIDEqual(t, "60f21224-481c-4e29-a325-c896f184aebe", sample2.PennsieveID)
 	metadatatest.AssertPennsieveInstanceIDEqual(t, "60f21224-481c-4e29-a325-c896f184aebe", sample2.GetPennsieveID())
 
 	metadatatest.AssertExternalInstanceIDEqual(t, "09d2a327-be38-403a-884d-a4d1d98b732c", sample2.ID)
 	metadatatest.AssertExternalInstanceIDEqual(t, "09d2a327-be38-403a-884d-a4d1d98b732c", sample2.ExternalID())
+
+	assert.Equal(t, "rat-sample-pk-1", sample2.PrimaryKey)
 
 }

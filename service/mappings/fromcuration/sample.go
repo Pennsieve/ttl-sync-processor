@@ -8,5 +8,5 @@ import (
 
 // ToSample is a mappings.Mapping from curation.Sample to metadata.Sample
 func ToSample(exportedSample curation.Sample) (metadata.Sample, error) {
-	return metadata.Sample{ID: changesetmodels.ExternalInstanceID(exportedSample.ID)}, nil
+	return metadata.Sample{ID: changesetmodels.ExternalInstanceID(exportedSample.ID), PrimaryKey: exportedSample.PrimaryKey}, nil
 }

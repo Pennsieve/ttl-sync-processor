@@ -71,7 +71,7 @@ func sampleSubjectSchemaExistsButNoInstances(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 	link1 := metadatatest.NewSampleSubject()
 	link2 := metadatatest.NewSampleSubject()
@@ -106,7 +106,7 @@ func noSampleSubjectChanges(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 	link1 := metadatatest.NewSampleSubject()
 	link2 := metadatatest.NewSampleSubject()
@@ -123,7 +123,7 @@ func sampleSubjectOrderDoesNotMatter(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 	link1 := metadatatest.NewSampleSubject()
 	link2 := metadatatest.NewSampleSubject()
@@ -140,7 +140,7 @@ func sampleSubjectDeleted(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 	link1 := metadatatest.NewSampleSubject()
 	link2 := metadatatest.NewSampleSubject()
@@ -164,7 +164,7 @@ func sampleSubjectChangeSampleID(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 
 	oldLink := metadatatest.NewSavedSampleSubject(metadatatest.NewSampleSubject())
@@ -191,7 +191,7 @@ func sampleSubjectChangeSubjectID(t *testing.T) {
 	schemaData := metadataclient.NewSchema(newTestSchemaData().
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
 	)
 
 	oldLink := metadatatest.NewSavedSampleSubject(metadatatest.NewSampleSubject())

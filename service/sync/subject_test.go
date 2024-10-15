@@ -94,7 +94,7 @@ func subjectModelDoesNotExist(t *testing.T) {
 }
 
 func subjectModelExistsButNoExistingRecords(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).Build())
 
 	newSubject := metadatatest.NewSubjectBuilder().Build()
 	newSubject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
@@ -154,7 +154,7 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 }
 
 func noSubjectChanges(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).Build())
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()
@@ -172,7 +172,7 @@ func noSubjectChanges(t *testing.T) {
 }
 
 func subjectOrderDoesNotMatter(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).Build())
 
 	subject1 := metadatatest.NewSubjectBuilder().Build()
 	subject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(3).Build()
@@ -190,7 +190,7 @@ func subjectOrderDoesNotMatter(t *testing.T) {
 }
 
 func updateSubject(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).Build())
 
 	originalSubject := metadatatest.NewSubjectBuilder().Build()
 	originalSubject2 := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
@@ -262,7 +262,7 @@ func updateSubject(t *testing.T) {
 }
 
 func deleteSubject(t *testing.T) {
-	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName))
+	schemaData := metadataclient.NewSchema(newTestSchemaData().WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).Build())
 
 	keptSubject1 := metadatatest.NewSubjectBuilder().Build()
 	deletedSubject := metadatatest.NewSubjectBuilder().WithSpeciesSynonyms(2).Build()
