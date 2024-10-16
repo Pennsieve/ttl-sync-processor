@@ -32,6 +32,7 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 
 	// Check changes contents
 	changesetFile, err := os.Open(processor.ChangesetFilePath())
+	require.NoError(t, err)
 	defer changesetFile.Close()
 	var changeset changesetmodels.Dataset
 	require.NoError(t, json.NewDecoder(changesetFile).Decode(&changeset))
@@ -53,7 +54,7 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	subjectChanges := findModelChangesByID(t, changeset.Models, "44fe1f90-f7b5-407a-8689-c512d7f41b7d")
 	assert.Nil(t, subjectChanges.Create)
 	assert.False(t, subjectChanges.Records.DeleteAll)
-	assert.Empty(t, subjectChanges.Records.Delete)
+	assert.Len(t, subjectChanges.Records.Delete, 1)
 	assert.Empty(t, subjectChanges.Records.Update)
 	assert.Len(t, subjectChanges.Records.Create, 2)
 
@@ -61,7 +62,7 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	sampleChanges := findModelChangesByID(t, changeset.Models, "29756423-00de-42f8-8706-acdcb1823685")
 	assert.Nil(t, sampleChanges.Create)
 	assert.False(t, sampleChanges.Records.DeleteAll)
-	assert.Len(t, sampleChanges.Records.Delete, 1)
+	assert.Len(t, sampleChanges.Records.Delete, 2)
 	assert.Len(t, sampleChanges.Records.Update, 1)
 	assert.Len(t, sampleChanges.Records.Create, 2)
 

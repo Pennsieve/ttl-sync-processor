@@ -18,7 +18,7 @@ type Sample struct {
 }
 
 func (s Sample) ExternalID() changesetmodels.ExternalInstanceID {
-	return changesetmodels.ExternalInstanceID(s.ID)
+	return s.ID
 }
 
 type SavedSample struct {

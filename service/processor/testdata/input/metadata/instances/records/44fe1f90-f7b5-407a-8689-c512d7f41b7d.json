@@ -96,5 +96,54 @@
         "value": null
       }
     ]
+  },
+  {
+    "createdAt": "2024-10-11T02:22:22.976000+00:00",
+    "createdBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "id": "a6725f6b-4504-490f-90bc-f21765d0cb07",
+    "type": "subject",
+    "updatedAt": "2024-10-11T02:22:22.976000+00:00",
+    "updatedBy": "N:user:a6f827dc-46e0-487c-9e19-ffe7dda54b42",
+    "values": [
+      {
+        "conceptTitle": false,
+        "dataType": {
+          "items": {
+            "format": null,
+            "type": "String"
+          },
+          "type": "array"
+        },
+        "default": false,
+        "displayName": "Species Synonyms",
+        "locked": false,
+        "name": "species_synonyms",
+        "required": false,
+        "value": [
+          "dog",
+          "pooch"
+        ]
+      },
+      {
+        "conceptTitle": true,
+        "dataType": "String",
+        "default": false,
+        "displayName": "ID",
+        "locked": false,
+        "name": "id",
+        "required": true,
+        "value": "dog-123"
+      },
+      {
+        "conceptTitle": false,
+        "dataType": "String",
+        "default": false,
+        "displayName": "Species",
+        "locked": false,
+        "name": "species",
+        "required": false,
+        "value": "dog"
+      }
+    ]
   }
 ]

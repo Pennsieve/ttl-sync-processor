@@ -17,7 +17,7 @@ func TestToSample(t *testing.T) {
 
 	samples, err := MapRecords(reader, metadata.SampleModelName, ToSample)
 	require.NoError(t, err)
-	assert.Len(t, samples, 2)
+	assert.Len(t, samples, 3)
 
 	sample1 := samples[0]
 	metadatatest.AssertPennsieveInstanceIDEqual(t, "b66cbf32-cb9f-4126-8182-01bd00ad7b17", sample1.PennsieveID)
@@ -36,5 +36,14 @@ func TestToSample(t *testing.T) {
 	metadatatest.AssertExternalInstanceIDEqual(t, "09d2a327-be38-403a-884d-a4d1d98b732c", sample2.ExternalID())
 
 	assert.Equal(t, "rat-sample-pk-1", sample2.PrimaryKey)
+
+	sample3 := samples[2]
+	metadatatest.AssertPennsieveInstanceIDEqual(t, "cf811b54-bab7-49f1-b239-79c0f6cac29a", sample3.PennsieveID)
+	metadatatest.AssertPennsieveInstanceIDEqual(t, "cf811b54-bab7-49f1-b239-79c0f6cac29a", sample3.GetPennsieveID())
+
+	metadatatest.AssertExternalInstanceIDEqual(t, "sample-689", sample3.ID)
+	metadatatest.AssertExternalInstanceIDEqual(t, "sample-689", sample3.ExternalID())
+
+	assert.Equal(t, "dog-sample-pk-5", sample3.PrimaryKey)
 
 }

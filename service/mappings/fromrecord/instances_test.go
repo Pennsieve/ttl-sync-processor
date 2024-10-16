@@ -17,9 +17,11 @@ func TestToDatasetMetadata(t *testing.T) {
 	require.NoError(t, err)
 	assert.NotNil(t, existingMetadata)
 	assert.Len(t, existingMetadata.Contributors, 5)
-	assert.Len(t, existingMetadata.Subjects, 2)
-	assert.Len(t, existingMetadata.Samples, 2)
+	assert.Len(t, existingMetadata.Subjects, 3)
+	assert.Len(t, existingMetadata.Samples, 3)
 	assert.Len(t, existingMetadata.SampleSubjects, 2)
+	assert.Len(t, existingMetadata.SampleProxies, 2)
+	assert.Len(t, existingMetadata.SubjectProxies, 1)
 }
 func TestToDatasetMetadata_NoModels(t *testing.T) {
 	inputDirectory := "testdata/input_no_model"

@@ -18,7 +18,7 @@ func TestToSubject(t *testing.T) {
 
 	subjects, err := MapRecords(reader, metadata.SubjectModelName, ToSubject)
 	require.NoError(t, err)
-	assert.Len(t, subjects, 2)
+	assert.Len(t, subjects, 3)
 
 	subject1 := subjects[0]
 	metadatatest.AssertPennsieveInstanceIDEqual(t, "b5ad14ab-f9e7-480b-b929-8e56db504181", subject1.PennsieveID)
@@ -39,5 +39,12 @@ func TestToSubject(t *testing.T) {
 	metadatatest.AssertExternalInstanceIDEqual(t, "a9ea0803-651b-4f0e-bda5-e2430e235e94", subject2.ID)
 	assert.Equal(t, "canis lupus familiaris", subject2.Species)
 	assert.Empty(t, subject2.SpeciesSynonyms)
+
+	subject3 := subjects[2]
+	metadatatest.AssertPennsieveInstanceIDEqual(t, "a6725f6b-4504-490f-90bc-f21765d0cb07", subject3.GetPennsieveID())
+	metadatatest.AssertExternalInstanceIDEqual(t, "dog-123", subject3.ExternalID())
+	assert.Equal(t, "dog", subject3.Species)
+	assert.Equal(t, []string{"dog",
+		"pooch"}, subject3.SpeciesSynonyms)
 
 }
