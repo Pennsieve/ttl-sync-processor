@@ -12,6 +12,8 @@ type DatasetMetadata struct {
 	Subjects       []Subject
 	Samples        []Sample
 	SampleSubjects []SampleSubject
+	SampleProxies  []Proxy
+	SubjectProxies []Proxy
 }
 
 func computeHash(value any) (string, error) {
@@ -47,4 +49,6 @@ type SavedDatasetMetadata struct {
 	Subjects       []SavedSubject
 	Samples        []SavedSample
 	SampleSubjects []SavedSampleSubject
+	SampleProxies  []SavedProxy
+	SubjectProxies []SavedProxy
 }

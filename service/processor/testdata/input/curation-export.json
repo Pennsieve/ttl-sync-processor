@@ -262,5 +262,75 @@
         "type": "SampleDirs"
       }
     ]
-  }
+  },
+  "dir_structure": [
+    {
+      "dataset_id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+      "dataset_relative_path": "first",
+      "mimetype": "inode/directory",
+      "path_meta": {
+        "created": "2019-01-16T23:21:43,571256Z",
+        "id": "N:collection:82a11de2-29fc-402c-a863-d3cda57b09bb",
+        "name": "first",
+        "parent_id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+        "updated": "2023-11-27T17:54:39,284713Z",
+        "user_id": 9999999
+      },
+      "remote_id": "collection:82a11de2-29fc-402c-a863-d3cda57b09bb",
+      "type": "path",
+      "uri_api": "https://api.pennsieve.io/collections/N:collection:82a11de2-29fc-402c-a863-d3cda57b09bb",
+      "uri_human": "https://app.pennsieve.io/N:organization:d4189513-cbfe-40a8-bff5-66d01487969a/datasets/N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70/files/N:collection:82a11de2-29fc-402c-a863-d3cda57b09bb"
+    },
+    {
+      "dataset_id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+      "dataset_relative_path": "first/sub-f1027e6e",
+      "mimetype": "inode/directory",
+      "path_meta": {
+        "created": "2019-11-26T23:27:14,751251Z",
+        "id": "N:collection:d1011339-b3a0-495d-bf94-76c1a1da1872",
+        "name": "sub-f1027e6e",
+        "parent_id": "collection:d1011339-b3a0-495d-bf94-76c1a1da1872",
+        "updated": "2022-05-03T17:09:07,989677Z",
+        "user_id": 9999999
+      },
+      "remote_id": "collection:d1011339-b3a0-495d-bf94-76c1a1da1872",
+      "type": "path",
+      "uri_api": "https://api.pennsieve.io/collections/N:collection:d1011339-b3a0-495d-bf94-76c1a1da1872",
+      "uri_human": "https://app.pennsieve.io/N:organization:d4189513-cbfe-40a8-bff5-66d01487969a/datasets/N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70/files/N:collection:d1011339-b3a0-495d-bf94-76c1a1da1872"
+    },
+    {
+      "dataset_id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+      "dataset_relative_path": "first/subject-x/samples/sample-f61ed5a9-1",
+      "mimetype": "inode/directory",
+      "path_meta": {
+        "created": "2019-01-16T23:32:23,097226Z",
+        "id": "N:collection:57e23ec5-824f-4690-b615-83dbd5e4d626",
+        "name": "sample-f61ed5a9-1",
+        "parent_id": "N:collection:19a5c77a-8174-4236-92e5-e7b438922975",
+        "updated": "2023-11-27T17:54:39,284713Z",
+        "user_id": 9999999
+      },
+      "remote_id": "collection:57e23ec5-824f-4690-b615-83dbd5e4d626",
+      "type": "path",
+      "uri_api": "https://api.pennsieve.io/collections/N:collection:57e23ec5-824f-4690-b615-83dbd5e4d626",
+      "uri_human": "https://app.pennsieve.io/N:organization:d4189513-cbfe-40a8-bff5-66d01487969a/datasets/N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70/files/N:collection:57e23ec5-824f-4690-b615-83dbd5e4d626"
+    },
+    {
+      "dataset_id": "N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70",
+      "dataset_relative_path": "first/subject-x/samples/sample-f61ed5a9-2",
+      "mimetype": "inode/directory",
+      "path_meta": {
+        "created": "2019-01-16T23:32:25,965614Z",
+        "id": "N:collection:dfca46a1-ceba-44f5-a462-4ec9d61b6a5f",
+        "name": "sample-f61ed5a9-2",
+        "parent_id": "N:collection:19a5c77a-8174-4236-92e5-e7b438922975",
+        "updated": "2023-11-27T17:54:39,284713Z",
+        "user_id": 9999999
+      },
+      "remote_id": "collection:dfca46a1-ceba-44f5-a462-4ec9d61b6a5f",
+      "type": "path",
+      "uri_api": "https://api.pennsieve.io/collections/N:collection:dfca46a1-ceba-44f5-a462-4ec9d61b6a5f",
+      "uri_human": "https://app.pennsieve.io/N:organization:d4189513-cbfe-40a8-bff5-66d01487969a/datasets/N:dataset:1378d69f-ea05-46cf-986f-7dcbd548ee70/files/N:collection:dfca46a1-ceba-44f5-a462-4ec9d61b6a5f"
+    }
+  ]
 }
