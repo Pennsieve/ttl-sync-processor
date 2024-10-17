@@ -3,9 +3,9 @@ package processor
 import (
 	"encoding/json"
 	"fmt"
+	changeset "github.com/pennsieve/processor-post-metadata/client"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
-	"github.com/pennsieve/ttl-sync-processor/client/changeset"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 	"github.com/pennsieve/ttl-sync-processor/service/sync"
 	"log/slog"

@@ -2,9 +2,9 @@ package sync
 
 import (
 	"github.com/google/uuid"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/stretchr/testify/require"
 	"slices"

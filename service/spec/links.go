@@ -1,6 +1,6 @@
 package spec
 
-import changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+import changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 
 type Link struct {
 	Name          string

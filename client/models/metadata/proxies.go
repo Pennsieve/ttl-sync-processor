@@ -2,7 +2,7 @@ package metadata
 
 import (
 	"fmt"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 )
 
 type ProxyKey struct {

@@ -1,6 +1,6 @@
 package metadata
 
-import changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+import changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 
 const SubjectModelName = "subject"
 const SubjectDisplayName = "Subject"

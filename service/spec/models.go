@@ -1,6 +1,6 @@
 package spec
 
-import changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+import changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 
 // Model contains information needed to create a model in the metadata schema
 type Model struct {

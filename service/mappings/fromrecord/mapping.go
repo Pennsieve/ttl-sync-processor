@@ -2,8 +2,8 @@ package fromrecord
 
 import (
 	"fmt"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 )
 

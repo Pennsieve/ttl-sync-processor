@@ -3,7 +3,7 @@ package metadatatest
 import (
 	"fmt"
 	"github.com/google/uuid"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/stretchr/testify/assert"
 )
 

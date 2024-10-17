@@ -1,7 +1,7 @@
 package fromcuration
 
 import (
-	"github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+	"github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/ttl-sync-processor/client/models/curation"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )

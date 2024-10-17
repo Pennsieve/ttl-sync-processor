@@ -3,7 +3,7 @@ package processor
 import (
 	"encoding/json"
 	"github.com/google/uuid"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

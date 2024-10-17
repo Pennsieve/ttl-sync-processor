@@ -2,8 +2,8 @@ package spec
 
 import (
 	"fmt"
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/processor-pre-metadata/client/models/datatypes"
-	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 )
 
 type arrayPropertyCreator func(propertyName, displayName string, itemDataType datatypes.SimpleType) (changesetmodels.PropertyCreate, error)
