@@ -75,6 +75,11 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 
 	assert.Len(t, sampleSubjectChanges.Instances.Create, 2)
 	assert.Len(t, sampleSubjectChanges.Instances.Delete, 1)
+
+	// Proxies
+	assert.NotNil(t, changeset.Proxies)
+	assert.False(t, changeset.Proxies.CreateProxyRelationshipSchema)
+	assert.Len(t, changeset.Proxies.RecordChanges, 4)
 }
 
 func TestCurationExportSyncProcessor_ReadExistingPennsieveMetadata(t *testing.T) {

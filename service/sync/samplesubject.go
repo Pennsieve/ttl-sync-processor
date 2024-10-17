@@ -8,5 +8,5 @@ import (
 )
 
 func ComputeSampleSubjectChanges(schemaData *metadataclient.Schema, old []metadata.SavedSampleSubject, new []metadata.SampleSubject) (*changesetmodels.LinkedPropertyChanges, error) {
-	return ComputeIdentifiablePropertyLinkChanges(schemaData, old, new, spec.SampleSubject)
+	return ComputeIdentifiableLinkedPropertyChanges(schemaData, old, new, spec.SampleSubject)
 }

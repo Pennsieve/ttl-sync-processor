@@ -18,6 +18,5 @@ func TestToDatasetMetadata(t *testing.T) {
 	assert.Len(t, datasetMetadata.Subjects, 4)
 	assert.Len(t, datasetMetadata.Samples, 3)
 	assert.Len(t, datasetMetadata.SampleSubjects, 3)
-	assert.Len(t, datasetMetadata.SampleProxies, 2)
-	assert.Len(t, datasetMetadata.SubjectProxies, 1)
+	assert.Len(t, datasetMetadata.Proxies, 3)
 }

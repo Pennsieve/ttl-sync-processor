@@ -25,11 +25,13 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatas
 	if existing.SampleSubjects, err = MapLinkedProperties(reader, metadata.SampleSubjectLinkName, sampleSubjectMapping); err != nil {
 		return nil, err
 	}
-	if existing.SampleProxies, err = MapProxies(reader, metadata.SampleModelName, existing.Samples); err != nil {
+	if existing.Proxies, err = MapProxies(reader, metadata.SampleModelName, existing.Samples); err != nil {
 		return nil, err
 	}
-	if existing.SubjectProxies, err = MapProxies(reader, metadata.SubjectModelName, existing.Subjects); err != nil {
+	if subjectProxies, err := MapProxies(reader, metadata.SubjectModelName, existing.Subjects); err != nil {
 		return nil, err
+	} else {
+		existing.Proxies = append(existing.Proxies, subjectProxies...)
 	}
 	return existing, nil
 }

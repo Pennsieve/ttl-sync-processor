@@ -1,6 +1,7 @@
 package metadatatest
 
 import (
+	"fmt"
 	"github.com/google/uuid"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
 	"github.com/stretchr/testify/assert"
@@ -12,6 +13,10 @@ func NewExternalInstanceID() changesetmodels.ExternalInstanceID {
 
 func NewPennsieveInstanceID() changesetmodels.PennsieveInstanceID {
 	return changesetmodels.PennsieveInstanceID(uuid.NewString())
+}
+
+func NewCollectionNodeID() string {
+	return fmt.Sprintf("N:collection:%s", uuid.NewString())
 }
 
 func AssertExternalInstanceIDEqual(t assert.TestingT, expectedExternalID string, actualExternalID changesetmodels.ExternalInstanceID) bool {

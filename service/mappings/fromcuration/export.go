@@ -25,7 +25,7 @@ func ToDatasetMetadata(export *curation.DatasetExport) (*metadata.DatasetMetadat
 		return nil, err
 	}
 
-	if exported.SampleProxies, exported.SubjectProxies, err = MapProxies(
+	if exported.Proxies, err = MapProxies(
 		exported.Samples,
 		exported.Subjects,
 		export.SpecimenDirs.Records,

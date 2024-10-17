@@ -20,8 +20,7 @@ func TestToDatasetMetadata(t *testing.T) {
 	assert.Len(t, existingMetadata.Subjects, 3)
 	assert.Len(t, existingMetadata.Samples, 3)
 	assert.Len(t, existingMetadata.SampleSubjects, 2)
-	assert.Len(t, existingMetadata.SampleProxies, 2)
-	assert.Len(t, existingMetadata.SubjectProxies, 1)
+	assert.Len(t, existingMetadata.Proxies, 3)
 }
 func TestToDatasetMetadata_NoModels(t *testing.T) {
 	inputDirectory := "testdata/input_no_model"

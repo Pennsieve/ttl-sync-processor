@@ -8,8 +8,8 @@ import (
 	"strings"
 )
 
-func MapProxies(samples []metadata.Sample, subjects []metadata.Subject, dirRecords []curation.Record, dirStructure []curation.DirStructureEntry) ([]metadata.Proxy, []metadata.Proxy, error) {
-	// Setup the common data
+func MapProxies(samples []metadata.Sample, subjects []metadata.Subject, dirRecords []curation.Record, dirStructure []curation.DirStructureEntry) ([]metadata.Proxy, error) {
+	// Set up the common data
 	var sampleDirRecords []curation.Record
 	var subjectDirRecords []curation.Record
 	for _, dirRecord := range dirRecords {
@@ -31,9 +31,9 @@ func MapProxies(samples []metadata.Sample, subjects []metadata.Subject, dirRecor
 	for _, sample := range samples {
 		sampleByPrimaryKey[sample.PrimaryKey] = sample
 	}
-	sampleProxies, err := mapProxiesOfType(sampleDirRecords, sampleByPrimaryKey, remoteIDByPath)
+	proxies, err := mapProxiesOfType(metadata.SampleModelName, sampleDirRecords, sampleByPrimaryKey, remoteIDByPath)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error mapping sample proxies: %w", err)
+		return nil, fmt.Errorf("error mapping sample proxies: %w", err)
 	}
 
 	// Group subjects by ID since that is the join key for subjects
@@ -41,15 +41,15 @@ func MapProxies(samples []metadata.Sample, subjects []metadata.Subject, dirRecor
 	for _, subject := range subjects {
 		subjectByID[subject.ID] = subject
 	}
-	subjectProxies, err := mapProxiesOfType(subjectDirRecords, subjectByID, remoteIDByPath)
+	subjectProxies, err := mapProxiesOfType(metadata.SubjectModelName, subjectDirRecords, subjectByID, remoteIDByPath)
 	if err != nil {
-		return nil, nil, fmt.Errorf("error mapping subject proxies: %w", err)
+		return nil, fmt.Errorf("error mapping subject proxies: %w", err)
 	}
-
-	return sampleProxies, subjectProxies, nil
+	proxies = append(proxies, subjectProxies...)
+	return proxies, nil
 }
 
-func mapProxiesOfType[JOIN ~string](dirRecords []curation.Record, byJoinKey map[JOIN]metadata.ExternalIDer, remoteIDByPath map[string]string) ([]metadata.Proxy, error) {
+func mapProxiesOfType[JOIN ~string](modelName string, dirRecords []curation.Record, byJoinKey map[JOIN]metadata.ExternalIDer, remoteIDByPath map[string]string) ([]metadata.Proxy, error) {
 	var proxies []metadata.Proxy
 
 	for _, dirRecord := range dirRecords {
@@ -68,7 +68,10 @@ func mapProxiesOfType[JOIN ~string](dirRecords []curation.Record, byJoinKey map[
 				nodeID = fmt.Sprintf("N:%s", nodeID)
 			}
 			proxies = append(proxies, metadata.Proxy{
-				EntityID:      curationObject.ExternalID(),
+				ProxyKey: metadata.ProxyKey{
+					ModelName: modelName,
+					EntityID:  curationObject.ExternalID(),
+				},
 				PackageNodeID: nodeID,
 			})
 		}

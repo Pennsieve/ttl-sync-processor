@@ -34,7 +34,10 @@ func MapProxies[T metadata.SavedExternalIDer](reader *metadataclient.Reader, mod
 				PennsieveID: changesetmodels.PennsieveInstanceID(proxyInstance.ID),
 				RecordID:    pennsieveRecordID,
 				Proxy: metadata.Proxy{
-					EntityID:      record.ExternalID(),
+					ProxyKey: metadata.ProxyKey{
+						ModelName: modelName,
+						EntityID:  record.ExternalID(),
+					},
 					PackageNodeID: proxyInstance.Content.NodeID,
 				},
 			})

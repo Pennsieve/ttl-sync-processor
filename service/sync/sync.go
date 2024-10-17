@@ -29,6 +29,11 @@ func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedData
 	if err := appendLinkedPropertyChanges(datasetChanges, schemaData, old.SampleSubjects, new.SampleSubjects, ComputeSampleSubjectChanges); err != nil {
 		return nil, err
 	}
+	proxyChanges, err := ComputeProxyChanges(schemaData, old.Proxies, new.Proxies)
+	if err != nil {
+		return nil, err
+	}
+	datasetChanges.Proxies = proxyChanges
 	return datasetChanges, nil
 }
 

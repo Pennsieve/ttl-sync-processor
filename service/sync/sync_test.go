@@ -1,6 +1,8 @@
 package sync
 
 import (
+	"fmt"
+	"github.com/google/uuid"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -33,7 +35,9 @@ func smokeTest(t *testing.T) {
 		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
 		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
 		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
-		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).Build(),
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).
+		WithProxyRelationshipSchema().
+		Build(),
 	)
 
 	contributor := metadatatest.NewContributorBuilder().WithNodeID().Build()
@@ -43,6 +47,13 @@ func smokeTest(t *testing.T) {
 		SampleID:  sample.ExternalID(),
 		SubjectID: subject.ExternalID(),
 	}
+	proxy := metadata.Proxy{
+		ProxyKey: metadata.ProxyKey{
+			ModelName: metadata.SampleModelName,
+			EntityID:  metadatatest.NewExternalInstanceID(),
+		},
+		PackageNodeID: fmt.Sprintf("N:collection:%s", uuid.NewString()),
+	}
 
 	changes, err := ComputeChangeset(schemaData,
 		&metadata.SavedDatasetMetadata{},
@@ -51,6 +62,7 @@ func smokeTest(t *testing.T) {
 			Subjects:       []metadata.Subject{subject},
 			Samples:        []metadata.Sample{sample},
 			SampleSubjects: []metadata.SampleSubject{sampleSubject},
+			Proxies:        []metadata.Proxy{proxy},
 		},
 	)
 	require.NoError(t, err)
@@ -65,4 +77,8 @@ func smokeTest(t *testing.T) {
 	sampleSubjectChanges := changes.LinkedProperties[0]
 	assert.NotNil(t, sampleSubjectChanges.ID)
 	assert.Len(t, sampleSubjectChanges.Instances.Create, 1)
+
+	assert.NotNil(t, changes.Proxies)
+	assert.False(t, changes.Proxies.CreateProxyRelationshipSchema)
+	assert.Len(t, changes.Proxies.RecordChanges, 1)
 }

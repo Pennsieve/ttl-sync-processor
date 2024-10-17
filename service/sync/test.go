@@ -5,6 +5,7 @@ import (
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/processor-pre-metadata/client/models/schema"
 	changesetmodels "github.com/pennsieve/ttl-sync-processor/client/changeset/models"
+	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/stretchr/testify/require"
 	"slices"
 	"testing"
@@ -52,6 +53,16 @@ func (d *testSchemaData) Build() ([]schema.Element, *schema.NullableRelationship
 }
 
 var emptySchema = metadataclient.NewSchema(nil, nil)
+
+func fullSchema() *metadataclient.Schema {
+	return metadataclient.NewSchema(newTestSchemaData().
+		WithModel(metadata.ContributorModelName, metadata.ContributorDisplayName).
+		WithModel(metadata.SampleModelName, metadata.SampleDisplayName).
+		WithModel(metadata.SubjectModelName, metadata.SubjectDisplayName).
+		WithLinkedProperty(metadata.SampleSubjectLinkName, metadata.SampleSubjectLinkDisplayName).
+		WithProxyRelationshipSchema().
+		Build())
+}
 
 func findValueByName(t *testing.T, values []changesetmodels.RecordValue, name string) changesetmodels.RecordValue {
 	index := slices.IndexFunc(values, func(value changesetmodels.RecordValue) bool {

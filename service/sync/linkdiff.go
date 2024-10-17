@@ -8,12 +8,12 @@ import (
 	"log/slog"
 )
 
-func ComputeIdentifiablePropertyLinkChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](
+func ComputeIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](
 	schemaData *metadataclient.Schema,
 	old []OLD,
 	new []NEW,
 	linkSpec spec.Link) (*changesetmodels.LinkedPropertyChanges, error) {
-	linkChanges, err := addIdentifiablePropertyLinkChanges(old, new)
+	linkChanges, err := addIdentifiableLinkedPropertyChanges(old, new)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func ComputeIdentifiablePropertyLinkChanges[OLD metadata.SavedExternalLink, NEW 
 	)
 	return linkChanges, nil
 }
-func addIdentifiablePropertyLinkChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error) {
+func addIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error) {
 	instanceChanges := changesetmodels.InstanceChanges{}
 
 	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
