@@ -72,9 +72,11 @@ func addIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW me
 }
 
 func setLinkIDOrCreate(linkChanges *changesetmodels.LinkedPropertyChanges, schemaData *metadataclient.Schema, linkSpec spec.Link) error {
+	linkChanges.FromModelName = linkSpec.FromModelName
+	linkChanges.ToModelName = linkSpec.ToModelName
 	if linkSchema, linkSchemaExists := schemaData.LinkedPropertyByName(linkSpec.Name); linkSchemaExists {
 		logger.Info("linkSchema exists", slog.String("linkSchemaName", linkSchema.Name), slog.String("linkSchemaID", linkSchema.ID))
-		linkChanges.ID = linkSchema.ID
+		linkChanges.ID = changesetmodels.PennsieveSchemaID(linkSchema.ID)
 	} else {
 		schemaCreate := linkSpec.SchemaCreate()
 		logger.Info("linkSchema must be created", slog.String("linkName", linkSpec.Name))

@@ -44,7 +44,7 @@ func (s DatasetMetadata) ContributorsHash() (string, error) {
 }
 
 type SavedDatasetMetadata struct {
-	Contributors   []Contributor
+	Contributors   []SavedContributor
 	Subjects       []SavedSubject
 	Samples        []SavedSample
 	SampleSubjects []SavedSampleSubject

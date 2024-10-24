@@ -1,5 +1,7 @@
 package metadata
 
+import changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
+
 const ContributorModelName = "contributor"
 const ContributorDisplayName = "Contributor"
 
@@ -19,4 +21,13 @@ type Contributor struct {
 	Degree        string `json:"degree,omitempty"`
 	ORCID         string `json:"orcid,omitempty"`
 	NodeID        string `json:"node_id,omitempty"`
+}
+
+type SavedContributor struct {
+	PennsieveID changesetmodels.PennsieveInstanceID `json:"-"`
+	Contributor
+}
+
+func (s SavedContributor) GetPennsieveID() changesetmodels.PennsieveInstanceID {
+	return s.PennsieveID
 }

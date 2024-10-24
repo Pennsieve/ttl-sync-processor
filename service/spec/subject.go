@@ -28,7 +28,10 @@ var SubjectInstance = IdentifiableInstance[metadata.SavedSubject, metadata.Subje
 		values = appendNonEmptyRecordValue(values, metadata.SubjectIDKey, subject.ID)
 		values = appendNonEmptyRecordValue(values, metadata.SpeciesKey, subject.Species)
 		values = appendNonEmptyRecordValue(values, metadata.SpeciesSynonymsKey, subject.SpeciesSynonyms)
-		return changesetmodels.RecordCreate{Values: values}
+		return changesetmodels.RecordCreate{
+			ExternalID:   subject.ExternalID(),
+			RecordValues: changesetmodels.RecordValues{Values: values},
+		}
 	},
 	Updater: func(oldSubject metadata.SavedSubject, newSubject metadata.Subject) (*changesetmodels.RecordUpdate, error) {
 		// since we are identifying old and new based on GetID(), it doesn't make sense to update the ID

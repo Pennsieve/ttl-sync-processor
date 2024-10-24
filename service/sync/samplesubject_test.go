@@ -41,10 +41,11 @@ func sampleSubjectLinkSchemaDoesNotExist(t *testing.T) {
 	// no link schema, so no ID and we need to supply the correct info to create schema
 	assert.Empty(t, changes.ID)
 	assert.NotNil(t, changes.Create)
+	assert.Equal(t, metadata.SampleModelName, changes.FromModelName)
+	assert.Equal(t, metadata.SubjectModelName, changes.ToModelName)
 	assert.Equal(t, metadata.SampleSubjectLinkName, changes.Create.Name)
 	assert.Equal(t, metadata.SampleSubjectLinkDisplayName, changes.Create.DisplayName)
-	assert.Equal(t, metadata.SampleModelName, changes.Create.FromModelName)
-	assert.Equal(t, metadata.SubjectModelName, changes.Create.ToModelName)
+
 	assert.Equal(t, 1, changes.Create.Position)
 
 	// Need to create two link instances and no deletes
@@ -79,8 +80,11 @@ func sampleSubjectSchemaExistsButNoInstances(t *testing.T) {
 	changes, err := ComputeSampleSubjectChanges(schemaData, []metadata.SavedSampleSubject{}, []metadata.SampleSubject{link1, link2})
 	require.NoError(t, err)
 
+	assert.Equal(t, metadata.SampleModelName, changes.FromModelName)
+	assert.Equal(t, metadata.SubjectModelName, changes.ToModelName)
+
 	expectedLinkSchema, _ := schemaData.LinkedPropertyByName(metadata.SampleSubjectLinkName)
-	assert.Equal(t, expectedLinkSchema.ID, changes.ID)
+	assert.Equal(t, expectedLinkSchema.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	// Need to create two link instances and no deletes
@@ -152,8 +156,11 @@ func sampleSubjectDeleted(t *testing.T) {
 	changes, err := ComputeSampleSubjectChanges(schemaData, []metadata.SavedSampleSubject{savedLink2, deletedLink, savedLink1}, []metadata.SampleSubject{link1, link2})
 	require.NoError(t, err)
 
+	assert.Equal(t, metadata.SampleModelName, changes.FromModelName)
+	assert.Equal(t, metadata.SubjectModelName, changes.ToModelName)
+
 	expectedLinkSchema, _ := schemaData.LinkedPropertyByName(metadata.SampleSubjectLinkName)
-	assert.Equal(t, expectedLinkSchema.ID, changes.ID)
+	assert.Equal(t, expectedLinkSchema.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.Empty(t, changes.Instances.Create)
@@ -172,6 +179,9 @@ func sampleSubjectChangeSampleID(t *testing.T) {
 
 	changes, err := ComputeSampleSubjectChanges(schemaData, []metadata.SavedSampleSubject{oldLink}, []metadata.SampleSubject{newLink})
 	require.NoError(t, err)
+
+	assert.Equal(t, metadata.SampleModelName, changes.FromModelName)
+	assert.Equal(t, metadata.SubjectModelName, changes.ToModelName)
 
 	assert.Nil(t, changes.Create)
 	assert.NotEmpty(t, changes.ID)
@@ -199,6 +209,9 @@ func sampleSubjectChangeSubjectID(t *testing.T) {
 
 	changes, err := ComputeSampleSubjectChanges(schemaData, []metadata.SavedSampleSubject{oldLink}, []metadata.SampleSubject{newLink})
 	require.NoError(t, err)
+
+	assert.Equal(t, metadata.SampleModelName, changes.FromModelName)
+	assert.Equal(t, metadata.SubjectModelName, changes.ToModelName)
 
 	assert.Nil(t, changes.Create)
 	assert.NotEmpty(t, changes.ID)

@@ -49,13 +49,13 @@ func sampleModelDoesNotExist(t *testing.T) {
 	assert.Len(t, changes.Create.Properties, 2)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Update)
 	assert.Empty(t, changes.Records.Delete)
 
 	assert.Len(t, changes.Records.Create, 2)
 	// The Create for newSample1
 	{
+		assert.Equal(t, newSample1.ExternalID(), changes.Records.Create[0].ExternalID)
 		values := changes.Records.Create[0].Values
 		// Only contains ID since that is the only property
 		assert.Len(t, values, 2)
@@ -73,6 +73,7 @@ func sampleModelDoesNotExist(t *testing.T) {
 
 	// The Create for newSample2
 	{
+		assert.Equal(t, newSample2.ExternalID(), changes.Records.Create[1].ExternalID)
 		values := changes.Records.Create[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
@@ -103,17 +104,17 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Update)
 	assert.Empty(t, changes.Records.Delete)
 
 	assert.Len(t, changes.Records.Create, 2)
 	// The Create for newSample1
 	{
+		assert.Equal(t, newSample1.ExternalID(), changes.Records.Create[0].ExternalID)
 		values := changes.Records.Create[0].Values
 		// Only contains ID
 		assert.Len(t, values, 2)
@@ -131,6 +132,7 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 
 	// The Create for newSample2
 	{
+		assert.Equal(t, newSample2.ExternalID(), changes.Records.Create[1].ExternalID)
 		values := changes.Records.Create[1].Values
 		// Only contains ID
 		assert.Len(t, values, 2)
@@ -200,11 +202,10 @@ func deleteSample(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Create)
 	assert.Empty(t, changes.Records.Update)
 
@@ -236,11 +237,10 @@ func updateSample(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Create)
 	assert.Empty(t, changes.Records.Delete)
 

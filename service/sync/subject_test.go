@@ -49,13 +49,13 @@ func subjectModelDoesNotExist(t *testing.T) {
 	assert.Len(t, changes.Create.Properties, 3)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Update)
 	assert.Empty(t, changes.Records.Delete)
 
 	assert.Len(t, changes.Records.Create, 2)
 	// The Create for newSubject
 	{
+		assert.Equal(t, newSubject.ExternalID(), changes.Records.Create[0].ExternalID)
 		values := changes.Records.Create[0].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
@@ -74,6 +74,7 @@ func subjectModelDoesNotExist(t *testing.T) {
 
 	// The Create for newSubject2
 	{
+		assert.Equal(t, newSubject2.ExternalID(), changes.Records.Create[1].ExternalID)
 		values := changes.Records.Create[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
@@ -106,17 +107,17 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Update)
 	assert.Empty(t, changes.Records.Delete)
 
 	assert.Len(t, changes.Records.Create, 2)
 	// The Create for newSubject
 	{
+		assert.Equal(t, newSubject.ExternalID(), changes.Records.Create[0].ExternalID)
 		values := changes.Records.Create[0].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
@@ -135,6 +136,7 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 
 	// The Create for newSubject2
 	{
+		assert.Equal(t, newSubject2.ExternalID(), changes.Records.Create[1].ExternalID)
 		values := changes.Records.Create[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
@@ -213,11 +215,10 @@ func updateSubject(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Create)
 	assert.Empty(t, changes.Records.Delete)
 
@@ -279,11 +280,10 @@ func deleteSubject(t *testing.T) {
 	require.NotNil(t, changes)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID)
+	assert.Equal(t, expectedModel.ID, changes.ID.String())
 	assert.Nil(t, changes.Create)
 
 	assert.NotNil(t, changes.Records)
-	assert.False(t, changes.Records.DeleteAll)
 	assert.Empty(t, changes.Records.Create)
 	assert.Empty(t, changes.Records.Update)
 

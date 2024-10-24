@@ -1,12 +1,13 @@
 package fromrecord
 
 import (
+	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/processor-pre-metadata/client/models/instance"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 )
 
-func ToContributor(record instance.Record) (metadata.Contributor, error) {
-	contributor := metadata.Contributor{}
+func ToContributor(record instance.Record) (metadata.SavedContributor, error) {
+	contributor := metadata.SavedContributor{PennsieveID: changesetmodels.PennsieveInstanceID(record.ID)}
 	if err := checkRecordType(record, metadata.ContributorModelName); err != nil {
 		return contributor, err
 	}
