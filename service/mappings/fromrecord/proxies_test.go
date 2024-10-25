@@ -26,8 +26,8 @@ func TestMapProxies_Samples(t *testing.T) {
 		RecordID:    "cf811b54-bab7-49f1-b239-79c0f6cac29a",
 		Proxy: metadata.Proxy{
 			ProxyKey: metadata.ProxyKey{
-				ModelName: metadata.SampleModelName,
-				EntityID:  "sample-689",
+				ModelName:        metadata.SampleModelName,
+				TargetExternalID: "sample-689",
 			},
 			PackageNodeID: "N:collection:908d58fd-878f-4c98-8b15-b8092628c79e",
 		},
@@ -38,8 +38,8 @@ func TestMapProxies_Samples(t *testing.T) {
 		RecordID:    "cf811b54-bab7-49f1-b239-79c0f6cac29a",
 		Proxy: metadata.Proxy{
 			ProxyKey: metadata.ProxyKey{
-				EntityID:  "sample-689",
-				ModelName: metadata.SampleModelName,
+				TargetExternalID: "sample-689",
+				ModelName:        metadata.SampleModelName,
 			},
 			PackageNodeID: "N:collection:4e21c210-1880-4ce7-b714-73fc969d66b9",
 		},
@@ -64,8 +64,8 @@ func TestMapProxies_Subjects(t *testing.T) {
 		RecordID:    "a6725f6b-4504-490f-90bc-f21765d0cb07",
 		Proxy: metadata.Proxy{
 			ProxyKey: metadata.ProxyKey{
-				ModelName: metadata.SubjectModelName,
-				EntityID:  "dog-123",
+				ModelName:        metadata.SubjectModelName,
+				TargetExternalID: "dog-123",
 			},
 			PackageNodeID: "N:collection:45229042-690d-4b4a-9a78-7c8e37a6ff20",
 		},

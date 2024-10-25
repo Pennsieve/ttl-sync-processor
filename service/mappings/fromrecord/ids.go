@@ -9,27 +9,35 @@ type RecordIDKey struct {
 	ExternalRecordID changesetmodels.ExternalInstanceID
 }
 
-// RecordIDStore maps (modelName, externalRecordID) -> PennsieveInstanceID and the inverse
-type RecordIDStore struct {
-	externalToPennsieve map[RecordIDKey]changesetmodels.PennsieveInstanceID
-	// pennsieveToExternal is the inverse of externalToPennsieve
-	pennsieveToExternal map[changesetmodels.PennsieveInstanceID]*RecordIDKey
-}
+type RecordIDMap map[RecordIDKey]changesetmodels.PennsieveInstanceID
+type inverseRecordIDMap map[changesetmodels.PennsieveInstanceID]*RecordIDKey
 
-func NewRecordIDStore() *RecordIDStore {
-	return &RecordIDStore{
-		externalToPennsieve: make(map[RecordIDKey]changesetmodels.PennsieveInstanceID),
-		pennsieveToExternal: make(map[changesetmodels.PennsieveInstanceID]*RecordIDKey),
-	}
-}
-
-func (m *RecordIDStore) Add(modelName string, externalRecordID changesetmodels.ExternalInstanceID, recordID changesetmodels.PennsieveInstanceID) {
+func (m RecordIDMap) Add(modelName string, externalRecordID changesetmodels.ExternalInstanceID, recordID changesetmodels.PennsieveInstanceID) *RecordIDKey {
 	key := RecordIDKey{
 		ModelName:        modelName,
 		ExternalRecordID: externalRecordID,
 	}
-	m.externalToPennsieve[key] = recordID
-	m.pennsieveToExternal[recordID] = &key
+	m[key] = recordID
+	return &key
+}
+
+// RecordIDStore maps (modelName, externalRecordID) -> PennsieveInstanceID and the inverse
+type RecordIDStore struct {
+	externalToPennsieve RecordIDMap
+	// pennsieveToExternal is the inverse of externalToPennsieve
+	pennsieveToExternal inverseRecordIDMap
+}
+
+func NewRecordIDStore() *RecordIDStore {
+	return &RecordIDStore{
+		externalToPennsieve: make(RecordIDMap),
+		pennsieveToExternal: make(inverseRecordIDMap),
+	}
+}
+
+func (m *RecordIDStore) Add(modelName string, externalRecordID changesetmodels.ExternalInstanceID, recordID changesetmodels.PennsieveInstanceID) {
+	key := m.externalToPennsieve.Add(modelName, externalRecordID, recordID)
+	m.pennsieveToExternal[recordID] = key
 }
 
 func (m *RecordIDStore) GetPennsieve(modelName string, externalRecordID changesetmodels.ExternalInstanceID) (changesetmodels.PennsieveInstanceID, bool) {

@@ -19,10 +19,13 @@ var logger = logging.PackageLogger("processor")
 const CurationExportFilename = "curation-export.json"
 
 type CurationExportSyncProcessor struct {
-	IntegrationID     string
-	InputDirectory    string
-	OutputDirectory   string
-	MetadataReader    *metadataclient.Reader
+	IntegrationID   string
+	InputDirectory  string
+	OutputDirectory string
+	MetadataReader  *metadataclient.Reader
+	// ExistingRecordIDs needs to be populated with ids of existing records
+	// from any model that takes part in relationships, linked properties, or package proxies
+	// Right now that is only Subjects and Samples
 	ExistingRecordIDs *fromrecord.RecordIDStore
 }
 
@@ -53,6 +56,8 @@ func (p *CurationExportSyncProcessor) Run() error {
 		return err
 	}
 	logger.Info("Computing required changes")
+	// Pass off the ID store to the sync package
+	sync.ExistingRecordStore = p.ExistingRecordIDs
 	changes, err := sync.ComputeChangeset(p.MetadataReader.Schema, oldMetadata, newMetadata)
 	if err != nil {
 		return err

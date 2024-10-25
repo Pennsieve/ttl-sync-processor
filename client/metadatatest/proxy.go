@@ -32,9 +32,9 @@ func (b *ProxyBuilder) Build(modelName string) metadata.Proxy {
 		PackageNodeID: "",
 	}
 	if b.entityID == nil {
-		proxy.EntityID = NewExternalInstanceID()
+		proxy.TargetExternalID = NewExternalInstanceID()
 	} else {
-		proxy.EntityID = *b.entityID
+		proxy.TargetExternalID = *b.entityID
 	}
 	if b.packageNodeID == nil {
 		proxy.PackageNodeID = NewCollectionNodeID()

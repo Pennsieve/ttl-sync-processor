@@ -4,6 +4,7 @@ import (
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/ttl-sync-processor/client/metadatatest"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
+	"github.com/pennsieve/ttl-sync-processor/service/mappings/fromrecord"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"slices"
@@ -22,6 +23,9 @@ func TestComputeProxyChanges(t *testing.T) {
 		"change package node id": proxyChangeNodeID,
 	} {
 		t.Run(scenario, func(t *testing.T) {
+			ExistingRecordStore = fromrecord.NewRecordIDStore()
+			recordIDMap = make(fromrecord.RecordIDMap)
+
 			test(t)
 		})
 	}
@@ -125,7 +129,7 @@ func proxyDeleted(t *testing.T) {
 
 	recordChanges := changes.RecordChanges[0]
 	assert.Equal(t, savedDeletedProxy.ModelName, recordChanges.ModelName)
-	assert.Equal(t, savedDeletedProxy.EntityID, recordChanges.RecordExternalID)
+	assert.Equal(t, savedDeletedProxy.TargetExternalID, recordChanges.RecordExternalID)
 	assert.Empty(t, recordChanges.NodeIDCreates)
 	assert.Len(t, recordChanges.InstanceIDDeletes, 1)
 	assert.Contains(t, recordChanges.InstanceIDDeletes, savedDeletedProxy.GetPennsieveID())
@@ -156,7 +160,7 @@ func proxyChangeRecordID(t *testing.T) {
 
 func proxyChangeNodeID(t *testing.T) {
 	oldProxy := metadatatest.NewSavedProxy(metadatatest.NewProxy(metadata.SampleModelName))
-	newProxy := metadatatest.NewProxyBuilder().WithEntityID(oldProxy.EntityID).Build(metadata.SampleModelName)
+	newProxy := metadatatest.NewProxyBuilder().WithEntityID(oldProxy.TargetExternalID).Build(metadata.SampleModelName)
 
 	changes, err := ComputeProxyChanges(fullSchema(), []metadata.SavedProxy{oldProxy}, []metadata.Proxy{newProxy})
 	require.NoError(t, err)
@@ -166,7 +170,7 @@ func proxyChangeNodeID(t *testing.T) {
 
 	recordChanges := changes.RecordChanges[0]
 	assert.Equal(t, metadata.SampleModelName, recordChanges.ModelName)
-	assert.Equal(t, oldProxy.EntityID, recordChanges.RecordExternalID)
+	assert.Equal(t, oldProxy.TargetExternalID, recordChanges.RecordExternalID)
 
 	assert.Len(t, recordChanges.NodeIDCreates, 1)
 	assert.Contains(t, recordChanges.NodeIDCreates, newProxy.PackageNodeID)
@@ -178,7 +182,7 @@ func proxyChangeNodeID(t *testing.T) {
 
 func FindProxyRecordChangeByProxyKey(proxyRecordChanges []changesetmodels.ProxyRecordChanges, key metadata.ProxyKey) *changesetmodels.ProxyRecordChanges {
 	index := slices.IndexFunc(proxyRecordChanges, func(changes changesetmodels.ProxyRecordChanges) bool {
-		return changes.ModelName == key.ModelName && changes.RecordExternalID == key.EntityID
+		return changes.ModelName == key.ModelName && changes.RecordExternalID == key.TargetExternalID
 	})
 	if index == -1 {
 		return nil

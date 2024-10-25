@@ -48,7 +48,7 @@ func addProxyInstanceChanges(old []metadata.SavedProxy, new []metadata.Proxy) (*
 			proxyChanges, entryInitialized := changesByProxyKey[newInstance.ProxyKey]
 			if !entryInitialized {
 				proxyChanges.ModelName = newInstance.ModelName
-				proxyChanges.RecordExternalID = newInstance.EntityID
+				proxyChanges.RecordExternalID = newInstance.TargetExternalID
 			}
 			proxyChanges.NodeIDCreates = append(proxyChanges.NodeIDCreates, newInstance.PackageNodeID)
 			changesByProxyKey[newInstance.ProxyKey] = proxyChanges
@@ -60,7 +60,7 @@ func addProxyInstanceChanges(old []metadata.SavedProxy, new []metadata.Proxy) (*
 			proxyChanges, entryInitialized := changesByProxyKey[toDelete.ProxyKey]
 			if !entryInitialized {
 				proxyChanges.ModelName = toDelete.ModelName
-				proxyChanges.RecordExternalID = toDelete.EntityID
+				proxyChanges.RecordExternalID = toDelete.TargetExternalID
 			}
 			proxyChanges.InstanceIDDeletes = append(proxyChanges.InstanceIDDeletes, toDelete.GetPennsieveID())
 			changesByProxyKey[toDelete.ProxyKey] = proxyChanges

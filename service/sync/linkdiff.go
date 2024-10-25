@@ -13,7 +13,7 @@ func ComputeIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NE
 	old []OLD,
 	new []NEW,
 	linkSpec spec.Link) (*changesetmodels.LinkedPropertyChanges, error) {
-	linkChanges, err := addIdentifiableLinkedPropertyChanges(old, new)
+	linkChanges, err := addIdentifiableLinkedPropertyChanges(old, new, linkSpec)
 	if err != nil {
 		return nil, err
 	}
@@ -31,7 +31,7 @@ func ComputeIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NE
 	)
 	return linkChanges, nil
 }
-func addIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](old []OLD, new []NEW) (*changesetmodels.LinkedPropertyChanges, error) {
+func addIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.ExternalLink](old []OLD, new []NEW, linkSpec spec.Link) (*changesetmodels.LinkedPropertyChanges, error) {
 	instanceChanges := changesetmodels.InstanceChanges{}
 
 	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
@@ -47,8 +47,16 @@ func addIdentifiableLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW me
 			delete(oldToDelete, newID)
 		}
 		if _, exists := oldByID[newID]; !exists {
+			fromExternalID := newInstance.FromExternalID()
+			if fromPennsieveID, found := ExistingRecordStore.GetPennsieve(linkSpec.FromModelName, fromExternalID); found {
+				recordIDMap.Add(linkSpec.FromModelName, fromExternalID, fromPennsieveID)
+			}
+			toExternalID := newInstance.ToExternalID()
+			if toPennsieveID, found := ExistingRecordStore.GetPennsieve(linkSpec.ToModelName, toExternalID); found {
+				recordIDMap.Add(linkSpec.ToModelName, toExternalID, toPennsieveID)
+			}
 			instanceChanges.Create = append(instanceChanges.Create, changesetmodels.InstanceLinkedPropertyCreate{
-				FromExternalID: newInstance.FromExternalID(),
+				FromExternalID: fromExternalID,
 				ToExternalID:   newInstance.ToExternalID(),
 			})
 		}

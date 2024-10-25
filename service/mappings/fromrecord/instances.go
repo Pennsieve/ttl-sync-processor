@@ -19,6 +19,9 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader, idMap *RecordIDStore)
 		return nil, err
 	}
 	for _, s := range existing.Subjects {
+		// Subjects can be linked with Samples and are also the target of package proxies,
+		// so the external IDs of existing records need to be mapped to pennsieve ids in
+		// case they take part in a link or proxy
 		idMap.Add(metadata.SubjectModelName, s.ExternalID(), s.GetPennsieveID())
 	}
 
@@ -26,6 +29,9 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader, idMap *RecordIDStore)
 		return nil, err
 	}
 	for _, s := range existing.Samples {
+		// Samples can be linked with Subjects and are also the target of package proxies,
+		// so the external IDs of existing records need to be mapped to pennsieve ids in
+		// case they take part in a link or proxy
 		idMap.Add(metadata.SampleModelName, s.ExternalID(), s.GetPennsieveID())
 	}
 	sampleSubjectMapping := NewSampleStoreMapping(idMap)

@@ -8,9 +8,9 @@ import (
 type ProxyKey struct {
 	// ModelName is the name of the model of this proxy's record
 	ModelName string `json:"model_name"`
-	// EntityID is the external ID of the record that is linked to the given PackageNodeID
+	// TargetExternalID is the external ID of the record that is linked to the given PackageNodeID
 	// So probably either a Subject or Sample ID
-	EntityID changesetmodels.ExternalInstanceID `json:"entity_id"`
+	TargetExternalID changesetmodels.ExternalInstanceID `json:"entity_id"`
 }
 
 type Proxy struct {
@@ -19,7 +19,7 @@ type Proxy struct {
 }
 
 func (p Proxy) ExternalID() changesetmodels.ExternalInstanceID {
-	return changesetmodels.ExternalInstanceID(fmt.Sprintf("%s::%s::%s", p.ModelName, p.EntityID, p.PackageNodeID))
+	return changesetmodels.ExternalInstanceID(fmt.Sprintf("%s::%s::%s", p.ModelName, p.TargetExternalID, p.PackageNodeID))
 }
 
 type SavedProxy struct {
