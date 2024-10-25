@@ -6,5 +6,5 @@ import (
 )
 
 func (p *CurationExportSyncProcessor) ExistingPennsieveMetadata() (*metadata.SavedDatasetMetadata, error) {
-	return fromrecord.ToSavedDatasetMetadata(p.MetadataReader)
+	return fromrecord.ToSavedDatasetMetadata(p.MetadataReader, p.ExistingRecordIDs)
 }

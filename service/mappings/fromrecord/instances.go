@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatasetMetadata, error) {
+func ToSavedDatasetMetadata(reader *metadataclient.Reader, idMap *RecordIDStore) (*metadata.SavedDatasetMetadata, error) {
 	existing := &metadata.SavedDatasetMetadata{}
 	var err error
 	if existing.Contributors, err = MapRecords(reader, metadata.ContributorModelName, ToContributor); err != nil {
@@ -18,10 +18,17 @@ func ToSavedDatasetMetadata(reader *metadataclient.Reader) (*metadata.SavedDatas
 	if existing.Subjects, err = MapRecords(reader, metadata.SubjectModelName, ToSubject); err != nil {
 		return nil, err
 	}
+	for _, s := range existing.Subjects {
+		idMap.Add(metadata.SubjectModelName, s.ExternalID(), s.GetPennsieveID())
+	}
+
 	if existing.Samples, err = MapRecords(reader, metadata.SampleModelName, ToSample); err != nil {
 		return nil, err
 	}
-	sampleSubjectMapping := NewSampleStoreMapping(existing.Samples, existing.Subjects)
+	for _, s := range existing.Samples {
+		idMap.Add(metadata.SampleModelName, s.ExternalID(), s.GetPennsieveID())
+	}
+	sampleSubjectMapping := NewSampleStoreMapping(idMap)
 	if existing.SampleSubjects, err = MapLinkedProperties(reader, metadata.SampleSubjectLinkName, sampleSubjectMapping); err != nil {
 		return nil, err
 	}

@@ -7,6 +7,7 @@ import (
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
+	"github.com/pennsieve/ttl-sync-processor/service/mappings/fromrecord"
 	"github.com/pennsieve/ttl-sync-processor/service/sync"
 	"log/slog"
 	"os"
@@ -18,10 +19,11 @@ var logger = logging.PackageLogger("processor")
 const CurationExportFilename = "curation-export.json"
 
 type CurationExportSyncProcessor struct {
-	IntegrationID   string
-	InputDirectory  string
-	OutputDirectory string
-	MetadataReader  *metadataclient.Reader
+	IntegrationID     string
+	InputDirectory    string
+	OutputDirectory   string
+	MetadataReader    *metadataclient.Reader
+	ExistingRecordIDs *fromrecord.RecordIDStore
 }
 
 func NewCurationExportSyncProcessor(integrationID string, inputDirectory string, outputDirectory string) (*CurationExportSyncProcessor, error) {
@@ -30,10 +32,11 @@ func NewCurationExportSyncProcessor(integrationID string, inputDirectory string,
 		return nil, fmt.Errorf("error creating metadata reader for %s: %w", inputDirectory, err)
 	}
 	return &CurationExportSyncProcessor{
-		IntegrationID:   integrationID,
-		InputDirectory:  inputDirectory,
-		OutputDirectory: outputDirectory,
-		MetadataReader:  reader,
+		IntegrationID:     integrationID,
+		InputDirectory:    inputDirectory,
+		OutputDirectory:   outputDirectory,
+		MetadataReader:    reader,
+		ExistingRecordIDs: fromrecord.NewRecordIDStore(),
 	}, nil
 }
 
