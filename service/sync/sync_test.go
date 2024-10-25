@@ -71,6 +71,24 @@ func smokeTest(t *testing.T) {
 		PackageNodeID: fmt.Sprintf("N:collection:%s", uuid.NewString()),
 	}
 
+	proxyOnExisting := metadata.Proxy{
+		ProxyKey: metadata.ProxyKey{
+			ModelName:        metadata.SampleModelName,
+			TargetExternalID: existingSample.ExternalID(),
+		},
+		PackageNodeID: fmt.Sprintf("N:collection:%s", uuid.NewString()),
+	}
+
+	existingSubject2 := metadatatest.NewSavedSubject(metadatatest.NewSubjectBuilder().Build())
+	addSavedSubjectRecordID(ExistingRecordStore, existingSubject2)
+	proxyOnExisting2 := metadata.Proxy{
+		ProxyKey: metadata.ProxyKey{
+			ModelName:        metadata.SubjectModelName,
+			TargetExternalID: existingSubject2.ExternalID(),
+		},
+		PackageNodeID: fmt.Sprintf("N:collection:%s", uuid.NewString()),
+	}
+
 	changes, err := ComputeChangeset(schemaData,
 		&metadata.SavedDatasetMetadata{},
 		&metadata.DatasetMetadata{
@@ -78,7 +96,7 @@ func smokeTest(t *testing.T) {
 			Subjects:       []metadata.Subject{subject},
 			Samples:        []metadata.Sample{sample},
 			SampleSubjects: []metadata.SampleSubject{sampleSubject, sampleSubjectOnExisting},
-			Proxies:        []metadata.Proxy{proxy},
+			Proxies:        []metadata.Proxy{proxy, proxyOnExisting, proxyOnExisting2},
 		},
 	)
 	require.NoError(t, err)
@@ -96,7 +114,7 @@ func smokeTest(t *testing.T) {
 
 	assert.NotNil(t, changes.Proxies)
 	assert.False(t, changes.Proxies.CreateProxyRelationshipSchema)
-	assert.Len(t, changes.Proxies.RecordChanges, 1)
+	assert.Len(t, changes.Proxies.RecordChanges, 3)
 
 	assert.Len(t, changes.RecordIDMaps, 2)
 	assert.Contains(t, changes.RecordIDMaps, changesetmodels.RecordIDMap{
@@ -108,7 +126,9 @@ func smokeTest(t *testing.T) {
 	assert.Contains(t, changes.RecordIDMaps, changesetmodels.RecordIDMap{
 		ModelName: metadata.SubjectModelName,
 		ExternalToPennsieve: map[changesetmodels.ExternalInstanceID]changesetmodels.PennsieveInstanceID{
-			existingSubject.ExternalID(): existingSubject.GetPennsieveID(),
+			existingSubject.ExternalID():  existingSubject.GetPennsieveID(),
+			existingSubject2.ExternalID(): existingSubject2.GetPennsieveID(),
 		},
 	})
+
 }

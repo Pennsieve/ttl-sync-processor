@@ -35,11 +35,16 @@ func emptyChangesProxies(t *testing.T) {
 	changes, err := ComputeProxyChanges(emptySchema, []metadata.SavedProxy{}, []metadata.Proxy{})
 	require.NoError(t, err)
 	assert.Nil(t, changes)
+	assert.Empty(t, recordIDMap)
 }
 
 func proxySchemaDoesNotExist(t *testing.T) {
 	proxy1 := metadatatest.NewProxy(metadata.SampleModelName)
 	proxy2 := metadatatest.NewProxy(metadata.SubjectModelName)
+
+	// make the record of proxy1 an existing record not otherwise known to this sync
+	proxy1TargetPennsieveID := metadatatest.NewPennsieveInstanceID()
+	ExistingRecordStore.Add(metadata.SampleModelName, proxy1.TargetExternalID, proxy1TargetPennsieveID)
 
 	changes, err := ComputeProxyChanges(emptySchema, []metadata.SavedProxy{}, []metadata.Proxy{proxy1, proxy2})
 	require.NoError(t, err)
@@ -58,11 +63,21 @@ func proxySchemaDoesNotExist(t *testing.T) {
 	require.NotNil(t, changes2)
 	assert.Empty(t, changes2.InstanceIDDeletes)
 	assert.Contains(t, changes2.NodeIDCreates, proxy2.PackageNodeID)
+
+	assert.Len(t, recordIDMap, 1)
+	assert.Equal(t, proxy1TargetPennsieveID, recordIDMap[fromrecord.RecordIDKey{
+		ModelName:        metadata.SampleModelName,
+		ExternalRecordID: proxy1.TargetExternalID,
+	}])
 }
 
 func proxySchemaExistsButNoInstances(t *testing.T) {
 	proxy1 := metadatatest.NewProxy(metadata.SampleModelName)
 	proxy2 := metadatatest.NewProxy(metadata.SubjectModelName)
+
+	// make the record of proxy2 an existing record not otherwise known to this sync
+	proxy2TargetPennsieveID := metadatatest.NewPennsieveInstanceID()
+	ExistingRecordStore.Add(metadata.SubjectModelName, proxy2.TargetExternalID, proxy2TargetPennsieveID)
 
 	changes, err := ComputeProxyChanges(fullSchema(), []metadata.SavedProxy{}, []metadata.Proxy{proxy1, proxy2})
 	require.NoError(t, err)
@@ -83,6 +98,12 @@ func proxySchemaExistsButNoInstances(t *testing.T) {
 	assert.Empty(t, changes2.InstanceIDDeletes)
 	assert.Len(t, changes2.NodeIDCreates, 1)
 	assert.Contains(t, changes2.NodeIDCreates, proxy2.PackageNodeID)
+
+	assert.Len(t, recordIDMap, 1)
+	assert.Equal(t, proxy2TargetPennsieveID, recordIDMap[fromrecord.RecordIDKey{
+		ModelName:        metadata.SubjectModelName,
+		ExternalRecordID: proxy2.TargetExternalID,
+	}])
 }
 
 func noProxyChanges(t *testing.T) {
@@ -96,6 +117,7 @@ func noProxyChanges(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Nil(t, changes)
+	assert.Empty(t, recordIDMap)
 }
 
 func proxyOrderDoesNotMatter(t *testing.T) {
@@ -109,6 +131,8 @@ func proxyOrderDoesNotMatter(t *testing.T) {
 	require.NoError(t, err)
 
 	assert.Nil(t, changes)
+	assert.Empty(t, recordIDMap)
+
 }
 
 func proxyDeleted(t *testing.T) {
@@ -133,6 +157,8 @@ func proxyDeleted(t *testing.T) {
 	assert.Empty(t, recordChanges.NodeIDCreates)
 	assert.Len(t, recordChanges.InstanceIDDeletes, 1)
 	assert.Contains(t, recordChanges.InstanceIDDeletes, savedDeletedProxy.GetPennsieveID())
+	assert.Empty(t, recordIDMap)
+
 }
 
 func proxyChangeRecordID(t *testing.T) {
@@ -156,11 +182,15 @@ func proxyChangeRecordID(t *testing.T) {
 	assert.Empty(t, createChanges.InstanceIDDeletes)
 	assert.Len(t, createChanges.NodeIDCreates, 1)
 	assert.Contains(t, createChanges.NodeIDCreates, newProxy.PackageNodeID)
+	assert.Empty(t, recordIDMap)
+
 }
 
 func proxyChangeNodeID(t *testing.T) {
 	oldProxy := metadatatest.NewSavedProxy(metadatatest.NewProxy(metadata.SampleModelName))
 	newProxy := metadatatest.NewProxyBuilder().WithEntityID(oldProxy.TargetExternalID).Build(metadata.SampleModelName)
+	targetPennsieveID := metadatatest.NewPennsieveInstanceID()
+	ExistingRecordStore.Add(metadata.SampleModelName, oldProxy.TargetExternalID, targetPennsieveID)
 
 	changes, err := ComputeProxyChanges(fullSchema(), []metadata.SavedProxy{oldProxy}, []metadata.Proxy{newProxy})
 	require.NoError(t, err)
@@ -177,6 +207,12 @@ func proxyChangeNodeID(t *testing.T) {
 
 	assert.Len(t, recordChanges.InstanceIDDeletes, 1)
 	assert.Contains(t, recordChanges.InstanceIDDeletes, oldProxy.GetPennsieveID())
+
+	assert.Len(t, recordIDMap, 1)
+	assert.Equal(t, targetPennsieveID, recordIDMap[fromrecord.RecordIDKey{
+		ModelName:        metadata.SampleModelName,
+		ExternalRecordID: oldProxy.TargetExternalID,
+	}])
 
 }
 
