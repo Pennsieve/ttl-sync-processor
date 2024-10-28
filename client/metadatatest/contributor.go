@@ -42,3 +42,10 @@ func (b *ContributorBuilder) WithDegree() *ContributorBuilder {
 	b.c.Degree = uuid.NewString()
 	return b
 }
+
+func NewSavedContributor(contributor metadata.Contributor) metadata.SavedContributor {
+	return metadata.SavedContributor{
+		PennsieveID: NewPennsieveInstanceID(),
+		Contributor: contributor,
+	}
+}

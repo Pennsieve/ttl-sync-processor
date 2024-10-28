@@ -69,8 +69,8 @@ func mapProxiesOfType[JOIN ~string](modelName string, dirRecords []curation.Reco
 			}
 			proxies = append(proxies, metadata.Proxy{
 				ProxyKey: metadata.ProxyKey{
-					ModelName: modelName,
-					EntityID:  curationObject.ExternalID(),
+					ModelName:        modelName,
+					TargetExternalID: curationObject.ExternalID(),
 				},
 				PackageNodeID: nodeID,
 			})

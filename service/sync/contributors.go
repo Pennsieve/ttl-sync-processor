@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-func ComputeContributorsChanges(schemaData *metadataclient.Schema, old []metadata.Contributor, new []metadata.Contributor) (*changesetmodels.ModelChanges, error) {
+func ComputeContributorsChanges(schemaData *metadataclient.Schema, old []metadata.SavedContributor, new []metadata.Contributor) (*changesetmodels.ModelChanges, error) {
 	oldHash, err := metadata.ComputeHash(old)
 	if err != nil {
 		return nil, fmt.Errorf("error computing hash of existing contributors metadata: %w", err)
@@ -32,7 +32,9 @@ func ComputeContributorsChanges(schemaData *metadataclient.Schema, old []metadat
 		slog.Int("toCreateCount", len(new)),
 	)
 	// hashes are different, so clear out existing records and create new ones from incoming
-	changes.Records.DeleteAll = true
+	for _, contributor := range old {
+		changes.Records.Delete = append(changes.Records.Delete, contributor.GetPennsieveID())
+	}
 	for _, contributor := range new {
 		create := spec.ContributorInstance.Creator(contributor)
 		changes.Records.Create = append(changes.Records.Create, create)

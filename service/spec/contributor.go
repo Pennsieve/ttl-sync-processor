@@ -1,10 +1,13 @@
 package spec
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"errors"
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	"github.com/pennsieve/processor-pre-metadata/client/models/datatypes"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
+	"strings"
 )
 
 var Contributor = Model{
@@ -35,8 +38,15 @@ var ContributorInstance = Instance[metadata.Contributor, metadata.Contributor]{
 		values = appendNonEmptyRecordValue(values, metadata.ORCIDKey, contributor.ORCID)
 		values = appendNonEmptyRecordValue(values, metadata.NodeIDKey, contributor.NodeID)
 
+		// This is a hack to build an externalID for the contributor since it does not have a natural one
+		stringValues := []string{contributor.FirstName, contributor.MiddleInitial, contributor.LastName, contributor.Degree, contributor.ORCID, contributor.NodeID}
+		content := strings.Join(stringValues, ":")
+		hashBytes := md5.Sum([]byte(content))
+		externalID := hex.EncodeToString(hashBytes[:])
+
 		create := changesetmodels.RecordCreate{
-			Values: values,
+			ExternalID:   changesetmodels.ExternalInstanceID(externalID),
+			RecordValues: changesetmodels.RecordValues{Values: values},
 		}
 		return create
 	},

@@ -7,6 +7,7 @@ import (
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
+	"github.com/pennsieve/ttl-sync-processor/service/mappings/fromrecord"
 	"github.com/pennsieve/ttl-sync-processor/service/sync"
 	"log/slog"
 	"os"
@@ -22,6 +23,10 @@ type CurationExportSyncProcessor struct {
 	InputDirectory  string
 	OutputDirectory string
 	MetadataReader  *metadataclient.Reader
+	// ExistingRecordIDs needs to be populated with ids of existing records
+	// from any model that takes part in relationships, linked properties, or package proxies
+	// Right now that is only Subjects and Samples
+	ExistingRecordIDs *fromrecord.RecordIDStore
 }
 
 func NewCurationExportSyncProcessor(integrationID string, inputDirectory string, outputDirectory string) (*CurationExportSyncProcessor, error) {
@@ -30,10 +35,11 @@ func NewCurationExportSyncProcessor(integrationID string, inputDirectory string,
 		return nil, fmt.Errorf("error creating metadata reader for %s: %w", inputDirectory, err)
 	}
 	return &CurationExportSyncProcessor{
-		IntegrationID:   integrationID,
-		InputDirectory:  inputDirectory,
-		OutputDirectory: outputDirectory,
-		MetadataReader:  reader,
+		IntegrationID:     integrationID,
+		InputDirectory:    inputDirectory,
+		OutputDirectory:   outputDirectory,
+		MetadataReader:    reader,
+		ExistingRecordIDs: fromrecord.NewRecordIDStore(),
 	}, nil
 }
 
@@ -50,6 +56,8 @@ func (p *CurationExportSyncProcessor) Run() error {
 		return err
 	}
 	logger.Info("Computing required changes")
+	// Pass off the ID store to the sync package
+	sync.ExistingRecordStore = p.ExistingRecordIDs
 	changes, err := sync.ComputeChangeset(p.MetadataReader.Schema, oldMetadata, newMetadata)
 	if err != nil {
 		return err

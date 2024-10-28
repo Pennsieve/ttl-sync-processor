@@ -25,14 +25,10 @@ func ComputeIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadat
 	if err := setModelIDOrCreate(modelChanges, schemaData, instanceSpec.Model); err != nil {
 		return nil, err
 	}
-	deleteMessage := slog.Int("deleteCount", len(modelChanges.Records.Delete))
-	if modelChanges.Records.DeleteAll {
-		deleteMessage = slog.Int("deleteAllCount", len(old))
-	}
 	modelLogger.Info("change summary",
-		deleteMessage,
 		slog.Int("createCount", len(modelChanges.Records.Create)),
 		slog.Int("updateCount", len(modelChanges.Records.Update)),
+		slog.Int("deleteCount", len(modelChanges.Records.Delete)),
 	)
 	return modelChanges, nil
 }
@@ -64,17 +60,10 @@ func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.Ex
 		}
 	}
 
-	if len(oldToDelete) > 0 {
-		if len(oldToDelete) == len(old) {
-			// use batch delete if we're going to delete all the existing records anyway
-			recordChanges.DeleteAll = true
-		} else {
-			for _, toDelete := range oldToDelete {
-				recordChanges.Delete = append(recordChanges.Delete, toDelete.GetPennsieveID())
-			}
-		}
+	for _, toDelete := range oldToDelete {
+		recordChanges.Delete = append(recordChanges.Delete, toDelete.GetPennsieveID())
 	}
-	if recordChanges.DeleteAll == false && len(recordChanges.Create) == 0 && len(recordChanges.Delete) == 0 && len(recordChanges.Update) == 0 {
+	if len(recordChanges.Create) == 0 && len(recordChanges.Delete) == 0 && len(recordChanges.Update) == 0 {
 		return nil, nil
 	}
 
@@ -84,7 +73,7 @@ func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.Ex
 func setModelIDOrCreate(modelChanges *changesetmodels.ModelChanges, schemaData *metadataclient.Schema, modelSpec spec.Model) error {
 	if model, modelExists := schemaData.ModelByName(modelSpec.Name); modelExists {
 		logger.Info("model exists", slog.String("modelName", modelSpec.Name), slog.String("modelID", model.ID))
-		modelChanges.ID = model.ID
+		modelChanges.ID = changesetmodels.PennsieveSchemaID(model.ID)
 	} else {
 		logger.Info("model must be created", slog.String("modelName", modelSpec.Name))
 		propsCreate, err := modelSpec.PropertyCreator()

@@ -13,10 +13,8 @@ type Link struct {
 
 func (l Link) SchemaCreate() changesetmodels.SchemaLinkedPropertyCreate {
 	return changesetmodels.SchemaLinkedPropertyCreate{
-		Name:          l.Name,
-		DisplayName:   l.DisplayName,
-		FromModelName: l.FromModelName,
-		ToModelName:   l.ToModelName,
-		Position:      l.Position,
+		Name:        l.Name,
+		DisplayName: l.DisplayName,
+		Position:    l.Position,
 	}
 }

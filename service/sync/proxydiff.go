@@ -47,8 +47,13 @@ func addProxyInstanceChanges(old []metadata.SavedProxy, new []metadata.Proxy) (*
 		if _, exists := oldByID[newID]; !exists {
 			proxyChanges, entryInitialized := changesByProxyKey[newInstance.ProxyKey]
 			if !entryInitialized {
-				proxyChanges.ModelName = newInstance.ModelName
-				proxyChanges.RecordExternalID = newInstance.EntityID
+				modelName := newInstance.ModelName
+				targetExternalID := newInstance.TargetExternalID
+				if targetPennsieveID, found := ExistingRecordStore.GetPennsieve(modelName, targetExternalID); found {
+					recordIDMap.Add(modelName, targetExternalID, targetPennsieveID)
+				}
+				proxyChanges.ModelName = modelName
+				proxyChanges.RecordExternalID = targetExternalID
 			}
 			proxyChanges.NodeIDCreates = append(proxyChanges.NodeIDCreates, newInstance.PackageNodeID)
 			changesByProxyKey[newInstance.ProxyKey] = proxyChanges
@@ -60,7 +65,7 @@ func addProxyInstanceChanges(old []metadata.SavedProxy, new []metadata.Proxy) (*
 			proxyChanges, entryInitialized := changesByProxyKey[toDelete.ProxyKey]
 			if !entryInitialized {
 				proxyChanges.ModelName = toDelete.ModelName
-				proxyChanges.RecordExternalID = toDelete.EntityID
+				proxyChanges.RecordExternalID = toDelete.TargetExternalID
 			}
 			proxyChanges.InstanceIDDeletes = append(proxyChanges.InstanceIDDeletes, toDelete.GetPennsieveID())
 			changesByProxyKey[toDelete.ProxyKey] = proxyChanges

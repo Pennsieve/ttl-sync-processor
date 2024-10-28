@@ -5,9 +5,23 @@ import (
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
 	"github.com/pennsieve/ttl-sync-processor/service/logging"
+	"github.com/pennsieve/ttl-sync-processor/service/mappings/fromrecord"
 )
 
 var logger = logging.PackageLogger("sync")
+
+// ExistingRecordStore is populated by the processor as it maps the existing, raw metadata to the models
+// used for the sync. It will hold a mapping of all existing records of the form
+// (modelName, recordExternalID) -> recordPennsieveID
+// This store will have to be set and reset for tests.
+var ExistingRecordStore *fromrecord.RecordIDStore
+
+// recordIDMap is populated by this package and then passed off to the post-processor file we are creating in this package.
+// Like ExistingRecordStore it is map (modelName, recordExternalID) -> recordPennsieveID, but it will only contain entries
+// for existing records that take part in a link or package proxy "created" by this sync. Since we are only passing the post-processor
+// external IDs, the post-processor will need this map to find the corresponding pennsieve record ids.
+// It will also have to be set and reset for tests
+var recordIDMap = make(fromrecord.RecordIDMap)
 
 // ComputeChangeset is the entrypoint for computing the changes necessary to sync the dataset's Pennsieve metadata with that
 // found in the curation export file.
@@ -15,7 +29,7 @@ var logger = logging.PackageLogger("sync")
 // old is the current state of the Pennsieve metadata instances, i.e., records, as downloaded by the metadata pre-processor
 // new is the state of the exported curation metadata as downloaded by the external file downloader
 func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.Dataset, error) {
-	datasetChanges := &changesetmodels.Dataset{}
+	datasetChanges := newDatasetChanges(schemaData)
 	if err := appendModelChanges(datasetChanges, schemaData, old.Contributors, new.Contributors, ComputeContributorsChanges); err != nil {
 		return nil, err
 	}
@@ -34,6 +48,9 @@ func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedData
 		return nil, err
 	}
 	datasetChanges.Proxies = proxyChanges
+
+	appendRecordIDMap(datasetChanges)
+
 	return datasetChanges, nil
 }
 
@@ -65,4 +82,31 @@ func appendLinkedPropertyChanges[OLD metadata.SavedExternalLink, NEW metadata.Ex
 		datasetChanges.LinkedProperties = append(datasetChanges.LinkedProperties, *linkedPropertyChanges)
 	}
 	return nil
+}
+
+func appendRecordIDMap(datasetChanges *changesetmodels.Dataset) {
+	nested := map[string]map[changesetmodels.ExternalInstanceID]changesetmodels.PennsieveInstanceID{}
+	for key, id := range recordIDMap {
+		idMap, found := nested[key.ModelName]
+		if !found {
+			idMap = make(map[changesetmodels.ExternalInstanceID]changesetmodels.PennsieveInstanceID)
+			nested[key.ModelName] = idMap
+		}
+		idMap[key.ExternalRecordID] = id
+	}
+
+	for modelName, idMap := range nested {
+		datasetChanges.RecordIDMaps = append(datasetChanges.RecordIDMaps, changesetmodels.RecordIDMap{
+			ModelName:           modelName,
+			ExternalToPennsieve: idMap,
+		})
+	}
+}
+
+func newDatasetChanges(schema *metadataclient.Schema) *changesetmodels.Dataset {
+	existingModelIDs := make(map[string]changesetmodels.PennsieveSchemaID, len(schema.ModelIDsByName()))
+	for name, id := range schema.ModelIDsByName() {
+		existingModelIDs[name] = changesetmodels.PennsieveSchemaID(id)
+	}
+	return &changesetmodels.Dataset{ExistingModelIDMap: existingModelIDs}
 }

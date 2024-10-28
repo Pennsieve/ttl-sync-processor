@@ -13,7 +13,9 @@ func TestToDatasetMetadata(t *testing.T) {
 	reader, err := metadataclient.NewReader(inputDirectory)
 	require.NoError(t, err)
 
-	existingMetadata, err := ToSavedDatasetMetadata(reader)
+	idMap := NewRecordIDStore()
+	existingMetadata, err := ToSavedDatasetMetadata(reader, idMap)
+
 	require.NoError(t, err)
 	assert.NotNil(t, existingMetadata)
 	assert.Len(t, existingMetadata.Contributors, 5)
@@ -21,15 +23,19 @@ func TestToDatasetMetadata(t *testing.T) {
 	assert.Len(t, existingMetadata.Samples, 3)
 	assert.Len(t, existingMetadata.SampleSubjects, 2)
 	assert.Len(t, existingMetadata.Proxies, 3)
+	assert.Equal(t, len(existingMetadata.Samples)+len(existingMetadata.Subjects), idMap.Len())
 }
 func TestToDatasetMetadata_NoModels(t *testing.T) {
 	inputDirectory := "testdata/input_no_model"
 
 	reader, err := metadataclient.NewReader(inputDirectory)
 	require.NoError(t, err)
-	existingMetadata, err := ToSavedDatasetMetadata(reader)
+
+	idMap := NewRecordIDStore()
+	existingMetadata, err := ToSavedDatasetMetadata(reader, idMap)
 	require.NoError(t, err)
 	assert.Empty(t, existingMetadata.Contributors)
+	assert.Empty(t, idMap.Len())
 
 }
 
@@ -38,8 +44,11 @@ func TestToDatasetMetadata_NoRecords(t *testing.T) {
 
 	reader, err := metadataclient.NewReader(inputDirectory)
 	require.NoError(t, err)
-	existingMetadata, err := ToSavedDatasetMetadata(reader)
+
+	idMap := NewRecordIDStore()
+	existingMetadata, err := ToSavedDatasetMetadata(reader, idMap)
 	require.NoError(t, err)
 	assert.Empty(t, existingMetadata.Contributors)
+	assert.Empty(t, idMap.Len())
 
 }

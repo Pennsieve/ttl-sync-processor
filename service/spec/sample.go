@@ -26,7 +26,10 @@ var SampleInstance = IdentifiableInstance[metadata.SavedSample, metadata.Sample]
 		var values []changesetmodels.RecordValue
 		values = appendNonEmptyRecordValue(values, metadata.SampleIDKey, new.ExternalID())
 		values = appendNonEmptyRecordValue(values, metadata.PrimaryKeyKey, new.PrimaryKey)
-		return changesetmodels.RecordCreate{Values: values}
+		return changesetmodels.RecordCreate{
+			ExternalID:   new.ExternalID(),
+			RecordValues: changesetmodels.RecordValues{Values: values},
+		}
 	},
 	Updater: func(old metadata.SavedSample, new metadata.Sample) (*changesetmodels.RecordUpdate, error) {
 		if old.ExternalID() != new.ExternalID() {

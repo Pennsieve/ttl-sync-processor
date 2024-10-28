@@ -16,12 +16,19 @@ func TestNewSampleStoreMapping(t *testing.T) {
 	reader, err := client.NewReader(inputDirectory)
 	require.NoError(t, err)
 
+	idMap := NewRecordIDStore()
 	samples, err := MapRecords(reader, metadata.SampleModelName, ToSample)
 	require.NoError(t, err)
+	for _, s := range samples {
+		idMap.Add(metadata.SampleModelName, s.ExternalID(), s.GetPennsieveID())
+	}
 	subjects, err := MapRecords(reader, metadata.SubjectModelName, ToSubject)
 	require.NoError(t, err)
+	for _, s := range subjects {
+		idMap.Add(metadata.SubjectModelName, s.ExternalID(), s.GetPennsieveID())
+	}
 
-	mapping := NewSampleStoreMapping(samples, subjects)
+	mapping := NewSampleStoreMapping(idMap)
 
 	sampleSubjectLinks, err := MapLinkedProperties(reader, metadata.SampleSubjectLinkName, mapping)
 	require.NoError(t, err)
