@@ -20,6 +20,7 @@ var ExistingRecordStore *fromrecord.RecordIDStore
 // Like ExistingRecordStore it is map (modelName, recordExternalID) -> recordPennsieveID, but it will only contain entries
 // for existing records that take part in a link or package proxy "created" by this sync. Since we are only passing the post-processor
 // external IDs, the post-processor will need this map to find the corresponding pennsieve record ids.
+// It will also have to be set and reset for tests
 var recordIDMap = make(fromrecord.RecordIDMap)
 
 // ComputeChangeset is the entrypoint for computing the changes necessary to sync the dataset's Pennsieve metadata with that
@@ -28,7 +29,7 @@ var recordIDMap = make(fromrecord.RecordIDMap)
 // old is the current state of the Pennsieve metadata instances, i.e., records, as downloaded by the metadata pre-processor
 // new is the state of the exported curation metadata as downloaded by the external file downloader
 func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedDatasetMetadata, new *metadata.DatasetMetadata) (*changesetmodels.Dataset, error) {
-	datasetChanges := &changesetmodels.Dataset{}
+	datasetChanges := newDatasetChanges(schemaData)
 	if err := appendModelChanges(datasetChanges, schemaData, old.Contributors, new.Contributors, ComputeContributorsChanges); err != nil {
 		return nil, err
 	}
@@ -100,4 +101,12 @@ func appendRecordIDMap(datasetChanges *changesetmodels.Dataset) {
 			ExternalToPennsieve: idMap,
 		})
 	}
+}
+
+func newDatasetChanges(schema *metadataclient.Schema) *changesetmodels.Dataset {
+	existingModelIDs := make(map[string]changesetmodels.PennsieveSchemaID, len(schema.ModelIDsByName()))
+	for name, id := range schema.ModelIDsByName() {
+		existingModelIDs[name] = changesetmodels.PennsieveSchemaID(id)
+	}
+	return &changesetmodels.Dataset{ExistingModelIDMap: existingModelIDs}
 }
