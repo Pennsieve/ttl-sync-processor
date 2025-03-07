@@ -12,8 +12,8 @@ var Subject = Model{
 	Name:        metadata.SubjectModelName,
 	DisplayName: metadata.SubjectDisplayName,
 	Description: "Subjects in this dataset",
-	PropertyCreator: func() (changesetmodels.PropertiesCreate, error) {
-		var create []changesetmodels.PropertyCreate
+	PropertyCreator: func() (changesetmodels.PropertiesCreateParams, error) {
+		var create []changesetmodels.PropertyCreateParams
 		var accumulatedErrors []error
 		create = appendSimplePropertyCreate(create, metadata.SpeciesKey, "Species", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
 		create = appendConceptTitlePropertyCreate(create, metadata.SubjectIDKey, "ID", newConceptTitlePropertyCreate, &accumulatedErrors)
