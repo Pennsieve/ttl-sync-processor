@@ -43,20 +43,21 @@ func subjectModelDoesNotExist(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Empty(t, changes.ID)
-	assert.NotNil(t, changes.Create)
-	assert.Equal(t, metadata.SubjectModelName, changes.Create.Model.Name)
-	assert.Len(t, changes.Create.Properties, 3)
+	var modelCreate *changesetmodels.ModelCreate
+	require.IsType(t, modelCreate, changes)
+	modelCreate = changes.(*changesetmodels.ModelCreate)
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelCreate.Create)
+	assert.Equal(t, metadata.SubjectModelName, modelCreate.Create.Model.Name)
+	assert.Len(t, modelCreate.Create.Properties, 3)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.NotNil(t, modelCreate.Records)
+
+	assert.Len(t, modelCreate.Records, 2)
 	// The Create for newSubject
 	{
-		assert.Equal(t, newSubject.ExternalID(), changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.Equal(t, newSubject.ExternalID(), modelCreate.Records[0].ExternalID)
+		values := modelCreate.Records[0].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -74,8 +75,8 @@ func subjectModelDoesNotExist(t *testing.T) {
 
 	// The Create for newSubject2
 	{
-		assert.Equal(t, newSubject2.ExternalID(), changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.Equal(t, newSubject2.ExternalID(), modelCreate.Records[1].ExternalID)
+		values := modelCreate.Records[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -106,19 +107,22 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
+	assert.Empty(t, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// The Create for newSubject
 	{
-		assert.Equal(t, newSubject.ExternalID(), changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.Equal(t, newSubject.ExternalID(), modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -136,8 +140,8 @@ func subjectModelExistsButNoExistingRecords(t *testing.T) {
 
 	// The Create for newSubject2
 	{
-		assert.Equal(t, newSubject2.ExternalID(), changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.Equal(t, newSubject2.ExternalID(), modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -214,18 +218,21 @@ func updateSubject(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Create)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Create)
+	assert.Empty(t, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Update, 2)
+	assert.Len(t, modelUpdate.Records.Update, 2)
 	// The Update for originalSubject
 	{
-		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSubjectSaved.PennsieveID).Values
+		values := findRecordUpdateByPennsieveID(t, modelUpdate.Records.Update, originalSubjectSaved.PennsieveID).Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
 
@@ -244,7 +251,7 @@ func updateSubject(t *testing.T) {
 
 	// The Update for originalSubject2
 	{
-		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSubject2Saved.PennsieveID).Values
+		values := findRecordUpdateByPennsieveID(t, modelUpdate.Records.Update, originalSubject2Saved.PennsieveID).Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 3)
 
@@ -279,14 +286,17 @@ func deleteSubject(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.SubjectModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Create)
-	assert.Empty(t, changes.Records.Update)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Create)
+	assert.Empty(t, modelUpdate.Records.Update)
 
-	assert.Len(t, changes.Records.Delete, 1)
-	assert.Contains(t, changes.Records.Delete, deletedSubjectSaved.PennsieveID)
+	assert.Len(t, modelUpdate.Records.Delete, 1)
+	assert.Contains(t, modelUpdate.Records.Delete, deletedSubjectSaved.PennsieveID)
 }

@@ -43,20 +43,21 @@ func sampleModelDoesNotExist(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Empty(t, changes.ID)
-	assert.NotNil(t, changes.Create)
-	assert.Equal(t, metadata.SampleModelName, changes.Create.Model.Name)
-	assert.Len(t, changes.Create.Properties, 2)
+	var modelCreate *changesetmodels.ModelCreate
+	require.IsType(t, modelCreate, changes)
+	modelCreate = changes.(*changesetmodels.ModelCreate)
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelCreate.Create)
+	assert.Equal(t, metadata.SampleModelName, modelCreate.Create.Model.Name)
+	assert.Len(t, modelCreate.Create.Properties, 2)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.NotNil(t, modelCreate.Records)
+
+	assert.Len(t, modelCreate.Records, 2)
 	// The Create for newSample1
 	{
-		assert.Equal(t, newSample1.ExternalID(), changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.Equal(t, newSample1.ExternalID(), modelCreate.Records[0].ExternalID)
+		values := modelCreate.Records[0].Values
 		// Only contains ID since that is the only property
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -73,8 +74,8 @@ func sampleModelDoesNotExist(t *testing.T) {
 
 	// The Create for newSample2
 	{
-		assert.Equal(t, newSample2.ExternalID(), changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.Equal(t, newSample2.ExternalID(), modelCreate.Records[1].ExternalID)
+		values := modelCreate.Records[1].Values
 		// Only contains ID and species because other values are empty
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -103,19 +104,22 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
+	assert.Empty(t, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// The Create for newSample1
 	{
-		assert.Equal(t, newSample1.ExternalID(), changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.Equal(t, newSample1.ExternalID(), modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains ID
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -132,8 +136,8 @@ func sampleModelExistsButNoExistingRecords(t *testing.T) {
 
 	// The Create for newSample2
 	{
-		assert.Equal(t, newSample2.ExternalID(), changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.Equal(t, newSample2.ExternalID(), modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains ID
 		assert.Len(t, values, 2)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -201,16 +205,19 @@ func deleteSample(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Create)
-	assert.Empty(t, changes.Records.Update)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Create)
+	assert.Empty(t, modelUpdate.Records.Update)
 
-	assert.Len(t, changes.Records.Delete, 1)
-	assert.Contains(t, changes.Records.Delete, deletedSampleSaved.PennsieveID)
+	assert.Len(t, modelUpdate.Records.Delete, 1)
+	assert.Contains(t, modelUpdate.Records.Delete, deletedSampleSaved.PennsieveID)
 }
 
 func updateSample(t *testing.T) {
@@ -236,18 +243,20 @@ func updateSample(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
 	expectedModel, _ := schemaData.ModelByName(metadata.SampleModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Create)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Create)
+	assert.Empty(t, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Update, 2)
+	assert.Len(t, modelUpdate.Records.Update, 2)
 	// The Update for originalSample
 	{
-		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSampleSaved.PennsieveID).Values
+		values := findRecordUpdateByPennsieveID(t, modelUpdate.Records.Update, originalSampleSaved.PennsieveID).Values
 		assert.Len(t, values, 2)
 
 		// ID not updated
@@ -262,7 +271,7 @@ func updateSample(t *testing.T) {
 
 	// The Update for originalSample2
 	{
-		values := findRecordUpdateByPennsieveID(t, changes.Records.Update, originalSample2Saved.PennsieveID).Values
+		values := findRecordUpdateByPennsieveID(t, modelUpdate.Records.Update, originalSample2Saved.PennsieveID).Values
 		assert.Len(t, values, 2)
 
 		// ID not updated

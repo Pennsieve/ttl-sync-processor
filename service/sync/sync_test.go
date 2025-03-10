@@ -101,9 +101,9 @@ func smokeTest(t *testing.T) {
 	)
 	require.NoError(t, err)
 
-	assert.Empty(t, changes.Models.Updates)
+	assert.Empty(t, changes.Models.Creates)
 	assert.Empty(t, changes.Models.Deletes)
-	assert.Len(t, changes.Models.Creates, 3)
+	assert.Len(t, changes.Models.Updates, 3)
 	for _, m := range changes.Models.Creates {
 		require.NotNil(t, m.Create)
 		assert.Len(t, m.Records, 1)
