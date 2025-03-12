@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"fmt"
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -56,17 +57,31 @@ func ComputeChangeset(schemaData *metadataclient.Schema, old *metadata.SavedData
 
 // modelChangeComputer instances are functions that compute the changes needed for a particular model.
 // It should return nil if no changes are needed.
+// It should return a ModelCreate or non-nil *ModelCreate if the model does not exist and needs to be created.
+// It should return a ModelUpdate or non-nil *ModelUpdate if the model already exists.
+// Any other return type will cause an error.
 // OLD is the type of existing records for the model, for example metadata.Contributor or metadata.SavedSubject
 // NEW is the type of new records for the model, for example metadata.Contributor or metadata.Subject
-type modelChangeComputer[OLD, NEW any] func(schemaData *metadataclient.Schema, old []OLD, new []NEW) (*changesetmodels.ModelChanges, error)
+type modelChangeComputer[OLD, NEW any] func(schemaData *metadataclient.Schema, old []OLD, new []NEW) (any, error)
 
 func appendModelChanges[OLD, NEW any](datasetChanges *changesetmodels.Dataset, schemaData *metadataclient.Schema, old []OLD, new []NEW, computer modelChangeComputer[OLD, NEW]) error {
 	modelChanges, err := computer(schemaData, old, new)
 	if err != nil {
 		return err
 	}
-	if modelChanges != nil {
-		datasetChanges.Models = append(datasetChanges.Models, *modelChanges)
+	switch changes := modelChanges.(type) {
+	case nil:
+	//Do nothing, no changes for this model
+	case *changesetmodels.ModelCreate:
+		datasetChanges.Models.Creates = append(datasetChanges.Models.Creates, *changes)
+	case changesetmodels.ModelCreate:
+		datasetChanges.Models.Creates = append(datasetChanges.Models.Creates, changes)
+	case *changesetmodels.ModelUpdate:
+		datasetChanges.Models.Updates = append(datasetChanges.Models.Updates, *changes)
+	case changesetmodels.ModelUpdate:
+		datasetChanges.Models.Updates = append(datasetChanges.Models.Updates, changes)
+	default:
+		return fmt.Errorf("unkown result type from modelChangeComputer: %T", changes)
 	}
 	return nil
 }

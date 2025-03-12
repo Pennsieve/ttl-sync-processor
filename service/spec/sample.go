@@ -12,8 +12,8 @@ var Sample = Model{
 	Name:        metadata.SampleModelName,
 	DisplayName: metadata.SampleDisplayName,
 	Description: "The samples in this dataset",
-	PropertyCreator: func() (changesetmodels.PropertiesCreate, error) {
-		var creates []changesetmodels.PropertyCreate
+	PropertyCreator: func() (changesetmodels.PropertiesCreateParams, error) {
+		var creates []changesetmodels.PropertyCreateParams
 		var errs []error
 		creates = appendConceptTitlePropertyCreate(creates, metadata.SampleIDKey, "ID", newConceptTitlePropertyCreate, &errs)
 		creates = appendSimplePropertyCreate(creates, metadata.PrimaryKeyKey, "Primary Key", datatypes.StringType, newSimplePropertyCreate, &errs)

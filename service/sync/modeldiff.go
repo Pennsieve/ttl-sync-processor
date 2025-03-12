@@ -1,6 +1,7 @@
 package sync
 
 import (
+	"fmt"
 	changesetmodels "github.com/pennsieve/processor-post-metadata/client/models"
 	metadataclient "github.com/pennsieve/processor-pre-metadata/client"
 	"github.com/pennsieve/ttl-sync-processor/client/models/metadata"
@@ -12,28 +13,29 @@ func ComputeIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadat
 	schemaData *metadataclient.Schema,
 	old []OLD,
 	new []NEW,
-	instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
-	modelChanges, err := addIdentifiableModelChanges(old, new, instanceSpec)
+	instanceSpec spec.IdentifiableInstance[OLD, NEW]) (any, error) {
+	recordChanges, err := addIdentifiableModelChanges(old, new, instanceSpec)
 	if err != nil {
 		return nil, err
 	}
 	modelLogger := logger.With(slog.String("modelName", instanceSpec.Model.Name))
-	if modelChanges == nil {
+	if recordChanges == nil {
 		modelLogger.Info("no changes")
 		return nil, nil
 	}
-	if err := setModelIDOrCreate(modelChanges, schemaData, instanceSpec.Model); err != nil {
+	modelChanges, err := setModelIDOrCreate(*recordChanges, schemaData, instanceSpec.Model)
+	if err != nil {
 		return nil, err
 	}
 	modelLogger.Info("change summary",
-		slog.Int("createCount", len(modelChanges.Records.Create)),
-		slog.Int("updateCount", len(modelChanges.Records.Update)),
-		slog.Int("deleteCount", len(modelChanges.Records.Delete)),
+		slog.Int("createCount", len(recordChanges.Create)),
+		slog.Int("updateCount", len(recordChanges.Update)),
+		slog.Int("deleteCount", len(recordChanges.Delete)),
 	)
 	return modelChanges, nil
 }
-func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.ModelChanges, error) {
-	recordChanges := changesetmodels.RecordChanges{}
+func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.ExternalIDer](old []OLD, new []NEW, instanceSpec spec.IdentifiableInstance[OLD, NEW]) (*changesetmodels.RecordChanges, error) {
+	recordChanges := &changesetmodels.RecordChanges{}
 
 	oldByID := map[changesetmodels.ExternalInstanceID]OLD{}
 	oldToDelete := map[changesetmodels.ExternalInstanceID]OLD{}
@@ -67,28 +69,36 @@ func addIdentifiableModelChanges[OLD metadata.SavedExternalIDer, NEW metadata.Ex
 		return nil, nil
 	}
 
-	return &changesetmodels.ModelChanges{Records: recordChanges}, nil
+	return recordChanges, nil
 }
 
-func setModelIDOrCreate(modelChanges *changesetmodels.ModelChanges, schemaData *metadataclient.Schema, modelSpec spec.Model) error {
+func setModelIDOrCreate(recordChanges changesetmodels.RecordChanges, schemaData *metadataclient.Schema, modelSpec spec.Model) (any, error) {
 	if model, modelExists := schemaData.ModelByName(modelSpec.Name); modelExists {
 		logger.Info("model exists", slog.String("modelName", modelSpec.Name), slog.String("modelID", model.ID))
-		modelChanges.ID = changesetmodels.PennsieveSchemaID(model.ID)
-	} else {
-		logger.Info("model must be created", slog.String("modelName", modelSpec.Name))
-		propsCreate, err := modelSpec.PropertyCreator()
-		if err != nil {
-			return err
-		}
-		modelChanges.Create = &changesetmodels.ModelPropsCreate{
-			Model: changesetmodels.ModelCreate{
+		return &changesetmodels.ModelUpdate{
+			ID:      changesetmodels.PennsieveSchemaID(model.ID),
+			Records: recordChanges,
+		}, nil
+	}
+	logger.Info("model must be created", slog.String("modelName", modelSpec.Name))
+	if len(recordChanges.Delete) > 0 || len(recordChanges.Update) > 0 {
+		return nil, fmt.Errorf("illegal state: a ModelCreate cannot contain record deletes or updates: %s", modelSpec.Name)
+	}
+	propsCreate, err := modelSpec.PropertyCreator()
+	if err != nil {
+		return nil, err
+	}
+	return &changesetmodels.ModelCreate{
+		Create: changesetmodels.ModelPropsCreate{
+			Model: changesetmodels.ModelCreateParams{
 				Name:        modelSpec.Name,
 				DisplayName: modelSpec.DisplayName,
 				Description: modelSpec.Description,
 				Locked:      false,
 			},
 			Properties: propsCreate,
-		}
-	}
-	return nil
+		},
+		Records: recordChanges.Create,
+	}, nil
+
 }

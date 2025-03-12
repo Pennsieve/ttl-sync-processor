@@ -39,18 +39,19 @@ func modelDoesNotExist(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
-	assert.Empty(t, changes.ID)
-	assert.NotNil(t, changes.Create)
-	assert.Equal(t, metadata.ContributorModelName, changes.Create.Model.Name)
-	assert.Len(t, changes.Create.Properties, 6)
+	var modelCreate *changesetmodels.ModelCreate
+	require.IsType(t, modelCreate, changes)
+	modelCreate = changes.(*changesetmodels.ModelCreate)
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelCreate.Create)
+	assert.Equal(t, metadata.ContributorModelName, modelCreate.Create.Model.Name)
+	assert.Len(t, modelCreate.Create.Properties, 6)
 
-	assert.Len(t, changes.Records.Create, 1)
-	assert.NotEmpty(t, changes.Records.Create[0].ExternalID)
-	values := changes.Records.Create[0].Values
+	assert.NotNil(t, modelCreate.Records)
+
+	assert.Len(t, modelCreate.Records, 1)
+	assert.NotEmpty(t, modelCreate.Records[0].ExternalID)
+	values := modelCreate.Records[0].Values
 	// Only contains first and last names and middle initial because other values are empty
 	assert.Len(t, values, 3)
 	valuesByName := map[string]changesetmodels.RecordValue{}
@@ -76,19 +77,22 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Empty(t, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
+	assert.Empty(t, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// First Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains first and last names and middle initial because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -106,8 +110,8 @@ func modelExistsButNoExistingRecords(t *testing.T) {
 
 	//Second Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains first and last names and node id because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -156,19 +160,22 @@ func orderChange(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib.GetPennsieveID(), savedContrib2.GetPennsieveID()}, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
+	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib.GetPennsieveID(), savedContrib2.GetPennsieveID()}, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// First Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains first and last names and middle initial because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -186,8 +193,8 @@ func orderChange(t *testing.T) {
 
 	//Second Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains first and last names and node id because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -223,19 +230,22 @@ func removeContributor(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, changes)
 
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
+
 	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
-	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib3.GetPennsieveID(), savedContrib2.GetPennsieveID(), savedContrib.GetPennsieveID()}, changes.Records.Delete)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
+	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib3.GetPennsieveID(), savedContrib2.GetPennsieveID(), savedContrib.GetPennsieveID()}, modelUpdate.Records.Delete)
 
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// First Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains first and last names and middle initial because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -253,8 +263,8 @@ func removeContributor(t *testing.T) {
 
 	//Second Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains first and last names and node id because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -286,20 +296,22 @@ func addContributor(t *testing.T) {
 	)
 	require.NoError(t, err)
 	require.NotNil(t, changes)
+	var modelUpdate *changesetmodels.ModelUpdate
+	require.IsType(t, modelUpdate, changes)
+	modelUpdate = changes.(*changesetmodels.ModelUpdate)
 
 	expectedModel, _ := schemaData.ModelByName(metadata.ContributorModelName)
-	assert.Equal(t, expectedModel.ID, changes.ID.String())
-	assert.Nil(t, changes.Create)
+	assert.Equal(t, expectedModel.ID, modelUpdate.ID.String())
 
-	assert.NotNil(t, changes.Records)
-	assert.Empty(t, changes.Records.Update)
+	assert.NotNil(t, modelUpdate.Records)
+	assert.Empty(t, modelUpdate.Records.Update)
 
-	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib.GetPennsieveID()}, changes.Records.Delete)
-	assert.Len(t, changes.Records.Create, 2)
+	assert.Equal(t, []changesetmodels.PennsieveInstanceID{savedContrib.GetPennsieveID()}, modelUpdate.Records.Delete)
+	assert.Len(t, modelUpdate.Records.Create, 2)
 	// First Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[0].ExternalID)
-		values := changes.Records.Create[0].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[0].ExternalID)
+		values := modelUpdate.Records.Create[0].Values
 		// Only contains first and last names and middle initial because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}
@@ -317,8 +329,8 @@ func addContributor(t *testing.T) {
 
 	//Second Contributor
 	{
-		assert.NotEmpty(t, changes.Records.Create[1].ExternalID)
-		values := changes.Records.Create[1].Values
+		assert.NotEmpty(t, modelUpdate.Records.Create[1].ExternalID)
+		values := modelUpdate.Records.Create[1].Values
 		// Only contains first and last names and node id because other values are empty
 		assert.Len(t, values, 3)
 		valuesByName := map[string]changesetmodels.RecordValue{}

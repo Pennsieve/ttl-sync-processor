@@ -37,28 +37,22 @@ func TestCurationExportSyncProcessor_Run(t *testing.T) {
 	var changeset changesetmodels.Dataset
 	require.NoError(t, json.NewDecoder(changesetFile).Decode(&changeset))
 
-	modelChanges := changeset.Models
-	assert.Len(t, modelChanges, 3)
+	assert.Len(t, changeset.Models.Updates, 3)
 
 	// Contributors
-	contributorChanges := findModelChangesByID(t, changeset.Models, "d77470bb-f39d-49ee-aa17-783e128cdfa0")
-	// model exists, so ID should be present and Create nil
-	assert.Nil(t, contributorChanges.Create)
-
+	contributorChanges := findModelUpdateByID(t, changeset.Models, "d77470bb-f39d-49ee-aa17-783e128cdfa0")
 	assert.Len(t, contributorChanges.Records.Create, 3)
 	assert.Empty(t, contributorChanges.Records.Update)
 	assert.Len(t, contributorChanges.Records.Delete, 5)
 
 	// Subjects
-	subjectChanges := findModelChangesByID(t, changeset.Models, "44fe1f90-f7b5-407a-8689-c512d7f41b7d")
-	assert.Nil(t, subjectChanges.Create)
+	subjectChanges := findModelUpdateByID(t, changeset.Models, "44fe1f90-f7b5-407a-8689-c512d7f41b7d")
 	assert.Len(t, subjectChanges.Records.Delete, 1)
 	assert.Empty(t, subjectChanges.Records.Update)
 	assert.Len(t, subjectChanges.Records.Create, 2)
 
 	// Samples
-	sampleChanges := findModelChangesByID(t, changeset.Models, "29756423-00de-42f8-8706-acdcb1823685")
-	assert.Nil(t, sampleChanges.Create)
+	sampleChanges := findModelUpdateByID(t, changeset.Models, "29756423-00de-42f8-8706-acdcb1823685")
 	assert.Len(t, sampleChanges.Records.Delete, 2)
 	assert.Len(t, sampleChanges.Records.Update, 1)
 	assert.Len(t, sampleChanges.Records.Create, 2)
@@ -109,10 +103,10 @@ func TestCurationExportSyncProcessor_ReadCurationExport(t *testing.T) {
 
 }
 
-func findModelChangesByID(t *testing.T, modelChanges []changesetmodels.ModelChanges, modelID string) changesetmodels.ModelChanges {
-	index := slices.IndexFunc(modelChanges, func(changes changesetmodels.ModelChanges) bool {
+func findModelUpdateByID(t *testing.T, modelChanges changesetmodels.ModelChanges, modelID string) changesetmodels.ModelUpdate {
+	index := slices.IndexFunc(modelChanges.Updates, func(changes changesetmodels.ModelUpdate) bool {
 		return changes.ID.String() == modelID
 	})
 	require.GreaterOrEqual(t, index, 0)
-	return modelChanges[index]
+	return modelChanges.Updates[index]
 }

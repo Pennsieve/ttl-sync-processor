@@ -7,5 +7,5 @@ type Model struct {
 	Name            string
 	DisplayName     string
 	Description     string
-	PropertyCreator func() (changesetmodels.PropertiesCreate, error)
+	PropertyCreator func() (changesetmodels.PropertiesCreateParams, error)
 }

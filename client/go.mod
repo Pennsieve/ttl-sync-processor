@@ -5,7 +5,7 @@ go 1.21
 require github.com/google/uuid v1.6.0
 
 require (
-	github.com/pennsieve/processor-post-metadata/client v0.0.1
+	github.com/pennsieve/processor-post-metadata/client v0.0.4
 	github.com/stretchr/testify v1.9.0
 )
 

@@ -14,8 +14,8 @@ var Contributor = Model{
 	Name:        metadata.ContributorModelName,
 	DisplayName: metadata.ContributorDisplayName,
 	Description: "Contributors to this dataset",
-	PropertyCreator: func() (changesetmodels.PropertiesCreate, error) {
-		var create []changesetmodels.PropertyCreate
+	PropertyCreator: func() (changesetmodels.PropertiesCreateParams, error) {
+		var create []changesetmodels.PropertyCreateParams
 		var accumulatedErrors []error
 		create = appendSimplePropertyCreate(create, metadata.FirstNameKey, "First Name", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
 		create = appendSimplePropertyCreate(create, metadata.MiddleInitialKey, "Middle Initial", datatypes.StringType, newSimplePropertyCreate, &accumulatedErrors)
